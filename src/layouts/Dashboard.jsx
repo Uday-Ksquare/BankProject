@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link, Outlet } from "react-router";
+import { Link, NavLink, Outlet } from "react-router";
 import {
   AppBar,
   Box,
@@ -91,39 +91,36 @@ export default function Layout() {
       </List>
       <List>
         {screens.map(({ screenName, screenId }) => (
-          <Link
-            key={screenName}
-            style={{ textDecoration: "none", color: "inherit" }}
+          <NavLink
+            key={screenId}
             to={screenId}
+            style={{ textDecoration: "none", color: "inherit" }}
+            className={({ isActive }) => (isActive ? "active-link" : "")}
           >
             <ListItem
               sx={{
-                // ml: 1,
-                // pl:1,
                 ":hover": { background: "#E2F0FF" },
-                ":active": { background: "#E2F0FF" },
-                ":focus": { background: "#E2F0FF" },
-                // border:"1px solid"
+                "&.Mui-selected": { background: "#E2F0FF" }, // for MUI selected state
               }}
-              key={screenName}
               disablePadding
             >
-              <ListItemButton>
+              <ListItemButton
+                selected={window.location.pathname.includes(screenId)} // highlights on active
+              >
                 <ListItemIcon sx={{ minWidth: "30px" }}>
-                  {/* {" "} */}
-                  <img style={{ height: 18 }} src={XLS} alt="" srcset="" />
+                  <img style={{ height: 18 }} src={XLS} alt="" />
                 </ListItemIcon>
                 <ListItemText
                   sx={{
                     "& .MuiListItemText-primary": {
-                      fontSize: "14px", // primary text font size
+                      fontSize: "14px",
                     },
                   }}
                   primary={screenName}
                 />
               </ListItemButton>
             </ListItem>
-          </Link>
+          </NavLink>
         ))}
       </List>
       <Box sx={{ flexGrow: 1 }} />

@@ -9,6 +9,11 @@ import SupplementsL2 from "./components/SupplementsL2.jsx";
 import DocumentUploaderpage from "./pages/DocumentuploaderPage.jsx";
 import CdsLstPage from "./pages/CdsLstPage.jsx";
 import DdaLstPage from "./pages/DdaLstPage.jsx";
+import FinDepPage from "./pages/FinDepPage.jsx";
+import FinLnsPage from "./pages/FinLnsPage.jsx";
+import InvLstPage from "./pages/InvLstPage.jsx";
+import SavLstPage from "./pages/SavLstPage.jsx";
+import Example from "./pages/Nested.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,12 +28,36 @@ const router = createBrowserRouter([
             element: <CdsLstPage />,
           },
           {
-            path:"/scr_ddalst",
-            element:<DdaLstPage/>
+            path: "/scr_ddalst",
+            element: <DdaLstPage />,
           },
           {
-            path:"/upload",
-            element:<DocumentUploaderpage/>
+            path: "/upload",
+            element: <DocumentUploaderpage />,
+          },
+          {
+            path: "/scr_findep",
+            element: <FinDepPage />,
+          },
+          {
+            path: "/scr_finlns",
+            element: <FinLnsPage />,
+          },
+          {
+            path: "/scr_invlst",
+            element: <InvLstPage />,
+          },
+          {
+            path:"/scr_savlst",
+            element:<SavLstPage/>
+          },
+          {
+            path:"/scr_worksheet",
+            element:<Example/>
+          },
+          {
+            path:"/test",
+            element:<SupplementsL1/>
           }
         ],
       },

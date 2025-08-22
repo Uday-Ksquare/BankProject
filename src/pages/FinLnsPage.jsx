@@ -3,15 +3,15 @@ import React, { useEffect } from "react";
 import { Box } from "@mui/material";
 import Table from "../components/Table";
 
-const CdsLstPage = () => {
-  const [cdsList, setCdsList] = React.useState([]);
+const FinLnsPage = () => {
+  const [data, setData] = React.useState([]);
 
 
   const fetchCdssList = () => {
     axios
-      .get("http://138.128.246.29:8080/api/dynamic/screens/scr_cdslst/202502")
+      .get("http://138.128.246.29:8080/api/dynamic/screens/scr_finlns/202502")
       .then((response) => {
-        setCdsList(response.data?.data);
+        setData(response.data?.data);
       })
       .catch((error) => {
         console.log(error);
@@ -23,8 +23,8 @@ const CdsLstPage = () => {
   }, []);
 
   return (
-    <Table tableData={cdsList} />
+    <Table tableData={data} />
   );
 };
 
-export default CdsLstPage;
+export default FinLnsPage;
