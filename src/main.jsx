@@ -7,6 +7,8 @@ import Layout from "./layouts/Dashboard.jsx";
 import SupplementsL1 from "./components/SupplementsL1.jsx";
 import SupplementsL2 from "./components/SupplementsL2.jsx";
 import DocumentUploaderpage from "./pages/DocumentuploaderPage.jsx";
+import CdsLstPage from "./pages/CdsLstPage.jsx";
+import DdaLstPage from "./pages/DdaLstPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -17,12 +19,12 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
           {
-            path: "/suplementl1",
-            element: <SupplementsL1 />,
+            path: "/scr_cdslst",
+            element: <CdsLstPage />,
           },
           {
-            path:"/suplementl2",
-            element:<SupplementsL2/>
+            path:"/scr_ddalst",
+            element:<DdaLstPage/>
           },
           {
             path:"/upload",

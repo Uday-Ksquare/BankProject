@@ -17,31 +17,40 @@ import {
   Typography,
   Button,
 } from "@mui/material";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
 import TheKsquareGroupLogo from "../assets/TheKsquareLogo.svg";
 import XLS from "../assets/XLS.svg";
+import { useState } from "react";
+import { useEffect } from "react";
+import axios from "axios";
 
-const drawerWidth = 290;
+const drawerWidth = 270;
 
 export default function Layout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md")); // md breakpoint
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [screens, setScreens] = useState([]);
+
+  const fetchScreens = () => {
+    axios
+      .get("http://138.128.246.29:8080/api/dynamic/screens")
+      .then((response) => {
+        setScreens(response.data?.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  console.log(screens);
+
+  useEffect(() => {
+    fetchScreens();
+  }, []);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
-  };
-
-  const routes = {
-    "Supplement | 1": "/suplementl1",
-    "Supplement | 2": "/suplementl2",
-    "Supplement | 3": "/suplementl3",
-    "Supplement | 4": "/suplementl4",
-    "Supplement | 5": "/suplementl5",
-    "Supplement | 6": "/suplementl6",
   };
 
   const drawerContent = (
@@ -81,18 +90,11 @@ export default function Layout() {
         </ListItem>
       </List>
       <List>
-        {[
-          "Supplement | 1",
-          "Supplement | 2",
-          "Supplement | 3",
-          "Supplement | 4",
-          "Supplement | 5",
-          "Supplement | 6",
-        ].map((text) => (
+        {screens.map(({ screenName, screenId }) => (
           <Link
-            key={text}
+            key={screenName}
             style={{ textDecoration: "none", color: "inherit" }}
-            to={routes[text]}
+            to={screenId}
           >
             <ListItem
               sx={{
@@ -103,7 +105,7 @@ export default function Layout() {
                 ":focus": { background: "#E2F0FF" },
                 // border:"1px solid"
               }}
-              key={text}
+              key={screenName}
               disablePadding
             >
               <ListItemButton>
@@ -117,22 +119,27 @@ export default function Layout() {
                       fontSize: "14px", // primary text font size
                     },
                   }}
-                  primary={text}
+                  primary={screenName}
                 />
               </ListItemButton>
             </ListItem>
           </Link>
         ))}
       </List>
-      <Box sx={{ flexGrow: 1 }}/>
+      <Box sx={{ flexGrow: 1 }} />
       <Box
         sx={{ display: "flex", justifyContent: "space-between", mb: 2, px: 2 }}
       >
         <Link to={"/upload"}>
-        <Button size="small" sx={{bgcolor:"#1E326B"}} variant="contained">
-          Upload File
-        </Button></Link>
-        <Button sx={{borderColor:"#1E326B",color:"#1E326B"}} variant="outlined" size="small">
+          <Button size="small" sx={{ bgcolor: "#1E326B" }} variant="contained">
+            Upload File
+          </Button>
+        </Link>
+        <Button
+          sx={{ borderColor: "#1E326B", color: "#1E326B" }}
+          variant="outlined"
+          size="small"
+        >
           Export
         </Button>
       </Box>
@@ -140,9 +147,16 @@ export default function Layout() {
   );
 
   return (
-    <Box sx={{ display: "flex", width: "100%" }}>
+    <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
       {/* Main Content */}
-      <Box sx={{ flexGrow: 1 }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          width: { md: `calc(100% - ${drawerWidth}px)` }, // leave space for sidebar
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         {/* AppBar */}
         <AppBar
           position="fixed"
@@ -195,24 +209,24 @@ export default function Layout() {
         <Box
           component="main"
           sx={{
-            p: 3,
-            mt: 8,
-            backgroundColor: "#F5F8FA",
             flexGrow: 1,
-            height: "100%",
+            mt: "64px", // AppBar height
+            backgroundColor: "#F5F8FA",
             overflow: "auto",
+            p: 3,
           }}
         >
           <Typography
             variant="h6"
             align="start"
             sx={{ color: "#1E326B", fontWeight: 600, fontSize: "18px" }}
-            fontWeight="bold"
             gutterBottom
           >
             ECCB PR01 Template Viewer
           </Typography>
-          <Outlet />
+          <Box sx={{ mt: 2, flex: 1, width: "100%" }}>
+            <Outlet />
+          </Box>
         </Box>
       </Box>
 
