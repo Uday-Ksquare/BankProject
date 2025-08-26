@@ -14,6 +14,9 @@ import FinLnsPage from "./pages/FinLnsPage.jsx";
 import InvLstPage from "./pages/InvLstPage.jsx";
 import SavLstPage from "./pages/SavLstPage.jsx";
 import Example from "./pages/Nested.jsx";
+import SupplimentDepositPage from "./pages/SupplimentDepositPage.jsx";
+import PrMapPage from "./pages/PrMapPage.jsx";
+import SuppGLoansPage from "./pages/SuppGLoansPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -48,17 +51,25 @@ const router = createBrowserRouter([
             element: <InvLstPage />,
           },
           {
-            path:"/scr_savlst",
-            element:<SavLstPage/>
+            path: "/scr_savlst",
+            element: <SavLstPage />,
           },
           {
-            path:"/scr_worksheet",
-            element:<Example/>
+            path: "/scr_worksheet",
+            element: <Example />,
           },
           {
-            path:"/test",
-            element:<SupplementsL1/>
-          }
+            path: "/scr_supp_a_deposits",
+            element: <SupplimentDepositPage />,
+          },
+          {
+            path: "/scr_pr01_map",
+            element: <PrMapPage />,
+          },
+          {
+            path: "/scr_supp_g_loans",
+            element: <SuppGLoansPage />,
+          },
         ],
       },
 

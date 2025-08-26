@@ -89,7 +89,7 @@ export default function Layout() {
           />
         </ListItem>
       </List>
-      <List>
+      <List sx={{overflowY: "auto",height: "70%"}}>
         {screens.map(({ screenName, screenId }) => (
           <NavLink
             key={screenId}
