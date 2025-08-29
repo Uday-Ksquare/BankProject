@@ -1,24 +1,50 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
-import React from 'react'
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import React, { useEffect, useState } from "react";
 
-const GlAccessDropDown = ({period, setPeriod}) => {
+const GlAccessDropDown = ({ period, setPeriod }) => {
+  const [periods, setPeriods] = useState([]);
+
+  const fetchGlPeriods = async () => {
+    try {
+      const res = await fetch("http://138.128.246.29:8080/api/import/glperiods");
+      const data = await res.json();
+      setPeriods(data.data || []);
+    } catch (err) {
+      console.error("Error fetching GL Periods", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchGlPeriods();
+  }, []);
+
+  // Ensure valid default selection
+  useEffect(() => {
+    if (periods.length > 0 && !periods.some(p => p.gl_period === period)) {
+      setPeriod(periods[0].gl_period);
+    }
+  }, [periods, period, setPeriod]);
+
   return (
-    <FormControl sx={{mb:"20px"}} size="small" fullWidth>
-        <InputLabel id="GL Period to access">GL Period to access</InputLabel>
-        <Select
-          labelId="GL Period to access"
-          id="demo-simple-select"
-          value={period}
-          label="GL Period to access"
-          onChange={setPeriod}
-        >
-          {[ '2023-Q1', '2023-Q2', '2023-Q3', '2023-Q4', '2024-Q1', '2024-Q2',
-          '2024-Q3', '2024-Q4', '2025-Q1', '2025-Q2', '2025-Q3', '2025-Q4'
-          ].map((period) => (<MenuItem value={period}>{period}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-  )
-}
+    <div style={{backgroundColor: "#FFFFFF",padding: "20px 20px 0px 20px",borderRadius: "10px"}}>
+      <FormControl sx={{ mb: "20px" }} size="small" fullWidth>
+      <InputLabel id="gl-period-label">GL Period to access</InputLabel>
+      <Select
+        labelId="gl-period-label"
+        id="gl-period-select"
+        value={period}
+        label="GL Period to access"
+        onChange={(e) => setPeriod(e.target.value)}
+      >
+        {periods.map((p) => (
+          <MenuItem value={p.gl_period} key={p.gl_period}>
+            {p?.period_description}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+    </div>
+  );
+};
 
-export default GlAccessDropDown
+export default GlAccessDropDown;

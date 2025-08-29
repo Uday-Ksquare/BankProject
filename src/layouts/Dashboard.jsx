@@ -43,7 +43,7 @@ export default function Layout() {
         console.log(error);
       });
   };
-  console.log(screens);
+  // console.log(screens);
 
   useEffect(() => {
     fetchScreens();
@@ -89,7 +89,7 @@ export default function Layout() {
           />
         </ListItem>
       </List>
-      <List sx={{overflowY: "auto",height: "70%"}}>
+      <List sx={{ overflowY: "auto", height: "70%" }}>
         {screens.map(({ screenName, screenId }) => (
           <NavLink
             key={screenId}
@@ -149,7 +149,7 @@ export default function Layout() {
       <Box
         sx={{
           flexGrow: 1,
-          width: { md: `calc(100% - ${drawerWidth}px)` }, // leave space for sidebar
+          width: "100%", // leave space for sidebar
           display: "flex",
           flexDirection: "column",
         }}
@@ -177,7 +177,7 @@ export default function Layout() {
             <Box sx={{ flexGrow: 1 }} />
 
             {/* Show Menu Icon only on Mobile */}
-            {isMobile && (
+            {
               <IconButton
                 color="inherit"
                 edge="end"
@@ -185,10 +185,10 @@ export default function Layout() {
               >
                 <MenuIcon />
               </IconButton>
-            )}
+            }
 
             {/* Avatar (desktop only) */}
-            {!isMobile && (
+            {/* {!isMobile && (
               <Tooltip title="Open settings">
                 <IconButton onClick={() => {}} sx={{ p: 0 }}>
                   <Avatar
@@ -198,7 +198,7 @@ export default function Layout() {
                   />
                 </IconButton>
               </Tooltip>
-            )}
+            )} */}
           </Toolbar>
         </AppBar>
 
@@ -207,6 +207,7 @@ export default function Layout() {
           component="main"
           sx={{
             flexGrow: 1,
+            width: "100%",
             mt: "64px", // AppBar height
             backgroundColor: "#F5F8FA",
             overflow: "auto",
@@ -221,46 +222,29 @@ export default function Layout() {
           >
             ECCB PR01 Template Viewer
           </Typography>
-          <Box sx={{ mt: 2, flex: 1, width: "100%" }}>
+          <Box sx={{ mt: 2, flex: 1 }}>
             <Outlet />
           </Box>
         </Box>
       </Box>
 
       {/* Drawer */}
-      {isMobile ? (
-        <Drawer
-          sx={{
-            width: "250px",
-            flexShrink: 0,
-            "& .MuiDrawer-paper": { width: "250px", boxSizing: "border-box" },
-          }}
-          anchor="right"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // improves mobile performance
-          }}
-        >
-          {drawerContent}
-        </Drawer>
-      ) : (
-        <Drawer
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
-              width: drawerWidth,
-              boxSizing: "border-box",
-            },
-          }}
-          anchor="right"
-          variant="permanent"
-          open
-        >
-          {drawerContent}
-        </Drawer>
-      )}
+
+      <Drawer
+        sx={{
+          width: "350px",
+          flexShrink: 0,
+          "& .MuiDrawer-paper": { width: "350px", boxSizing: "border-box" },
+        }}
+        anchor="right"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // improves mobile performance
+        }}
+      >
+        {drawerContent}
+      </Drawer>
     </Box>
   );
 }

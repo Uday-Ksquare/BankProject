@@ -1,29 +1,41 @@
 import axios from "axios";
-import React, { useEffect } from "react";
-import { Box } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import Table from "../components/Table";
+import GlAccessDropDown from "../components/GlAccessDropDown";
+import { getCurrentYearMonth } from "../utils/consonants";
+import { useSearchParams } from "react-router-dom";
+import { Stack } from "@mui/material";
 
 const CdsLstPage = () => {
-  const [cdsList, setCdsList] = React.useState([]);
+  const [cdsList, setCdsList] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [period, setPeriod] = useState(getCurrentYearMonth());
 
-
-  const fetchCdssList = () => {
+  const fetchCdssList = (glPeriod) => {
     axios
-      .get("http://138.128.246.29:8080/api/dynamic/screens/scr_cdslst/202502")
+      .get(
+        `http://138.128.246.29:8080/api/dynamic/screens/scr_cdslst/${glPeriod}`
+      )
       .then((response) => {
-        setCdsList(response.data?.data);
+        setCdsList(response.data?.data || []);
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error fetching CDS list:", error);
       });
   };
 
   useEffect(() => {
-    fetchCdssList();
-  }, []);
+    if (period) {
+      setSearchParams({ glPeriod: period });
+      fetchCdssList(period);
+    }
+  }, [period]);
 
   return (
-    <Table tableData={cdsList} />
+    <Stack spacing={2}>
+      <GlAccessDropDown period={period} setPeriod={setPeriod} />
+      <Table tableData={cdsList} />
+    </Stack>
   );
 };
 
