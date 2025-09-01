@@ -14,7 +14,7 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-const FileUploader = ({ setFiles, files,isEnable }) => {
+const FileUploader = ({ setFiles, files, isEnable }) => {
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
     setFiles(selectedFiles); // overwrite for this row

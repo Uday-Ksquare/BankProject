@@ -16,6 +16,7 @@ import {
 import React, { useState } from "react";
 import GlAccessDropDown from "../components/GlAccessDropDown";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import axios from "axios";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -114,9 +115,39 @@ const DocumentUploaderContainer = () => {
     setFiles((prev) => ({ ...prev, [id]: fileList }));
   };
 
+  const uploadfiles = async () => {
+    try {
+      const formData = new FormData();
+
+      // append glperiod
+      formData.append("glperiod", period);
+
+      // append files (multiple allowed)
+      Object.values(files).forEach((fileList) => {
+        fileList.forEach((file) => {
+          formData.append("files[]", file);
+        });
+      });
+
+      const response = await axios.post(
+        "http://138.128.246.29:8080/api/import/files",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Upload success:", response.data);
+    } catch (error) {
+      console.error("Upload failed:", error);
+    }
+  };
+
   return (
     <div>
-      <GlAccessDropDown period={period} setPeriod={(e) => setPeriod(e.target.value)} />
+      <GlAccessDropDown period={period} setPeriod={setPeriod} />
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }}>
           <TableHead>
@@ -155,8 +186,22 @@ const DocumentUploaderContainer = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
-        <Button disabled={Object.keys(files).length === 0} size="small" color="success" variant="contained">Submit</Button>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginTop: "20px",
+        }}
+      >
+        <Button
+          disabled={Object.keys(files).length === 0}
+          size="small"
+          color="success"
+          variant="contained"
+          onClick={uploadfiles}
+        >
+          Submit
+        </Button>
       </div>
     </div>
   );

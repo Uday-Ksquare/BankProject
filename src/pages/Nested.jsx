@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import axios from "axios";
+import { formatFinancial, formatIndianNumber } from "../utils/consonants";
 
 const cellStyles = {
   border: "1px solid #aaa",
@@ -53,6 +54,14 @@ const getExtraIndent = (desc) => {
   return 2; // fallback
 };
 
+const columnWidths = {
+  description: "40%", // wider for text
+  codeValue: "15%",
+  previous: "15%",
+  current: "15%",
+  variance: "15%",
+};
+
 // 🔑 Recursive Row Component
 const ExpandableRow = ({ row, level = 0 }) => {
   const [open, setOpen] = useState(false);
@@ -81,28 +90,77 @@ const ExpandableRow = ({ row, level = 0 }) => {
         {/* parent row does NOT show codeValue */}
 
         <TableCell sx={cellStyles} align="right">
-          {(row.totBalancePrevious ?? row.totPreviousBalance ?? 0).toLocaleString()}
+          {formatFinancial(
+            row.totBalancePrevious ?? row.totPreviousBalance ?? 0
+          )}
         </TableCell>
         <TableCell sx={cellStyles} align="right">
-          {(row.totBalanceCurrent ?? row.totCurrentBalance ?? 0).toLocaleString()}
+          <div
+            style={{
+              display: "inline-block",
+              padding: "2px 4px",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+          >
+           {formatFinancial(row.totBalanceCurrent ?? row.totCurrentBalance ?? 0)}
+
+          </div>
         </TableCell>
         <TableCell sx={cellStyles} align="right">
-          {(row.totVariance ?? row.variance ?? 0).toLocaleString()}
+          <div
+            style={{
+              display: "inline-block",
+              padding: "2px 4px",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+          >
+            {(() => {
+              const val = row.totVariance ?? row.variance ?? 0;
+              return val < 0
+                ? `(${formatIndianNumber(Math.abs(val))})`
+                : formatIndianNumber(val);
+            })()}
+          </div>
         </TableCell>
       </TableRow>
 
       {hasChildren && (
         <TableRow>
-          <TableCell colSpan={4} sx={{ paddingBottom: 0, paddingTop: 0 }}>
+          <TableCell
+            colSpan={4}
+            sx={{ paddingBottom: 0, paddingTop: 0, padding: 0 }}
+          >
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Table size="small">
                 <TableHead>
                   <TableRow>
                     <TableCell sx={headerCellStyles}>Description</TableCell>
-                    <TableCell sx={headerCellStyles} align="right">Code Value</TableCell>
-                    <TableCell sx={headerCellStyles} align="right">Previous</TableCell>
-                    <TableCell sx={headerCellStyles} align="right">Current</TableCell>
-                    <TableCell sx={headerCellStyles} align="right">Variance</TableCell>
+                    <TableCell sx={headerCellStyles} align="right">
+                      Code Value
+                    </TableCell>
+                    <TableCell
+                      sx={headerCellStyles}
+                      style={{ width: "15%" }}
+                      align="right"
+                    >
+                      Previous
+                    </TableCell>
+                    <TableCell
+                      sx={headerCellStyles}
+                      style={{ width: "15%" }}
+                      align="right"
+                    >
+                      Current
+                    </TableCell>
+                    <TableCell
+                      sx={[headerCellStyles]}
+                      style={{ width: "15%" }}
+                      align="right"
+                    >
+                      Variance
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -112,7 +170,10 @@ const ExpandableRow = ({ row, level = 0 }) => {
                       <TableCell
                         sx={{
                           ...cellStyles,
-                          pl: 2 + (level + 1) * 4 + getExtraIndent(child.descripcion),
+                          pl:
+                            2 +
+                            (level + 1) * 4 +
+                            getExtraIndent(child.descripcion),
                         }}
                       >
                         {child.descripcion || child.detailLabel}
@@ -124,13 +185,59 @@ const ExpandableRow = ({ row, level = 0 }) => {
                       </TableCell>
 
                       <TableCell sx={cellStyles} align="right">
-                        {(child.totBalancePrevious ?? child.totPreviousBalance ?? 0).toLocaleString()}
+                        <div
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 4px",
+                            fontSize: "12px",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          {formatIndianNumber(
+                            child.totBalancePrevious ??
+                              child.totPreviousBalance ??
+                              0
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell sx={cellStyles} align="right">
-                        {(child.totBalanceCurrent ?? child.totCurrentBalance ?? 0).toLocaleString()}
+                        <div
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 4px",
+                            fontSize: "12px",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          {(() => {
+                            const val =
+                              child.totBalanceCurrent ??
+                              child.totCurrentBalance ??
+                              0;
+                            return val < 0
+                              ? `(${formatIndianNumber(Math.abs(val))})`
+                              : formatIndianNumber(val);
+                          })()}
+                        </div>
                       </TableCell>
+
                       <TableCell sx={cellStyles} align="right">
-                        {(child.totVariance ?? child.variance ?? 0).toLocaleString()}
+                        <div
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 4px",
+                            fontSize: "12px",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          {(() => {
+                            const val =
+                              child.totVariance ?? child.variance ?? 0;
+                            return val < 0
+                              ? `(${formatIndianNumber(Math.abs(val))})`
+                              : formatIndianNumber(val);
+                          })()}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -144,13 +251,14 @@ const ExpandableRow = ({ row, level = 0 }) => {
   );
 };
 
-
 const Example = () => {
   const [worksheet, setWorksheet] = useState([]);
 
   const fetchCdssList = () => {
     axios
-      .get("http://138.128.246.29:8080/api/dynamic/screens/scr_worksheet/202502")
+      .get(
+        "http://138.128.246.29:8080/api/dynamic/screens/scr_worksheet/202502"
+      )
       .then((response) => {
         setWorksheet(response.data?.data || []);
       })
@@ -170,13 +278,25 @@ const Example = () => {
           <TableHead>
             <TableRow>
               <TableCell sx={headerCellStyles}>Description</TableCell>
-              <TableCell sx={headerCellStyles} align="right">
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "15%" }}
+                align="right"
+              >
                 Previous
               </TableCell>
-              <TableCell sx={headerCellStyles} align="right">
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "15%" }}
+                align="right"
+              >
                 Current
               </TableCell>
-              <TableCell sx={headerCellStyles} align="right">
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "15%" }}
+                align="right"
+              >
                 Variance
               </TableCell>
             </TableRow>
