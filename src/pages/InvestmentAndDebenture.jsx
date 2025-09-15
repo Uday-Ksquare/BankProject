@@ -9,9 +9,12 @@ import {
   Paper,
   Collapse,
   IconButton,
+  Button,
 } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import axios from "axios";
+import { formatFinancial, formatIndianNumber } from "../utils/consonants";
+import EditDrawerComponent from "./EditDrawerComponent";
 
 const cellStyles = {
   border: "1px solid #aaa",
@@ -32,112 +35,228 @@ const groupHeaderStyles = {
 };
 
 // helper: detect extra indent for hierarchy
-// helper: detect extra indent for hierarchy
 const getExtraIndent = (desc) => {
   if (!desc) return 0;
 
   const text = desc.trim();
 
-  if (/^\d+\./.test(text)) {
-    // Numbers like "1.", "2.", "3."
-    return 0;
+  if (/^\d+\./.test(text)) return 0; // Numbers like "1.", "2.", "3."
+
+  if (
+    /^(\((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\)|(?:i|ii|iii|iv|v|vi|vii|viii|ix|x))\.?/i.test(
+      text
+    )
+  ) {
+    return 8; // Matches (i), (ii), i., ii., etc.
   }
 
-//   if (/^\([ivxlcdm]+\)\.?/i.test(text)) {
-    
-    
-//     return 8; // (i), (ii), (iii), etc.
-//   }
+  if (/^[a-z]\.?/.test(text)) return 4; // Lowercase letters
+  if (/^[A-Z]\.?/.test(text)) return 6; // Uppercase letters
 
-  if (/^(\((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\)|(?:i|ii|iii|iv|v|vi|vii|viii|ix|x))\.?/i.test(text)) {
-  return 8; // Matches (i), (ii), i., ii., etc. but NOT c. or d.
-}
+  return 2; // fallback
+};
 
-
-  if (/^[a-z]\.?/.test(text)) {
-    // console.log(text);
-    // Lowercase letters (a., b., c.)
-    return 4;
-  }
-if (/^(\([ivxlcdm]+\)|[ivxlcdm]+)\.?/i.test(text)) {
-  return 8; // Matches (i), (ii), i., ii., etc.
-}
-
-  if (/^[A-Z]\.?/.test(text)) {
-    // Uppercase letters (A., B., C.)
-    return 6; // optional: slightly different than lowercase
-  }
-
-  // Fallback for text without marker
-  return 2;
+const columnWidths = {
+  description: "40%", // wider for text
+  codeValue: "15%",
+  previous: "15%",
+  current: "15%",
+  variance: "15%",
 };
 
 // 🔑 Recursive Row Component
 const ExpandableRow = ({ row, level = 0 }) => {
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editingRow, setEditingRow] = useState(null);
   const [open, setOpen] = useState(false);
-
   const hasChildren = row.detalles && row.detalles.length > 0;
 
   return (
     <>
+      {/* parent row */}
       <TableRow>
-        <TableCell
-          sx={{
-            ...(level === 0 ? groupHeaderStyles : cellStyles),
-            pl: 2 + level * 4 + getExtraIndent(row.descripcion), // base + hierarchy + rules
-            display: "flex", // align marker + text
-            gap: 1,
-          }}
-        >
+        <TableCell sx={cellStyles} align="right">
           {hasChildren && (
             <IconButton size="small" onClick={() => setOpen(!open)}>
               {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </IconButton>
           )}
-          {row.descripcion || row.detailLabel}
+          {row.concept_id}
         </TableCell>
 
-        <TableCell sx={cellStyles} align="right">
-          {(
-            row.totBalancePrevious ??
-            row.totPreviousBalance ??
-            0
-          ).toLocaleString()}
+        {/* parent row does NOT show codeValue */}
+
+        <TableCell
+          sx={{
+            ...(level === 0 ? groupHeaderStyles : cellStyles),
+            pl: 2 + level * 4 + getExtraIndent(row.concept_name.toString()), // base + hierarchy + rules
+            display: "flex",
+            gap: 1,
+          }}
+        >
+          {row?.concept_name}
         </TableCell>
         <TableCell sx={cellStyles} align="right">
-          {(
-            row.totBalanceCurrent ??
-            row.totCurrentBalance ??
-            0
-          ).toLocaleString()}
+          <div
+            style={{
+              display: "inline-block",
+              padding: "2px 4px",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+          >
+            {row?.concept_label}
+          </div>
         </TableCell>
         <TableCell sx={cellStyles} align="right">
-          {(row.totVariance ?? row.variance ?? 0).toLocaleString()}
+          <div
+            style={{
+              display: "inline-block",
+              padding: "2px 4px",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+          >
+            {row?.concept_order}
+          </div>
+        </TableCell>
+        <TableCell sx={cellStyles}>
+          <Button
+            onClick={() => {
+              setOpenEdit(true);
+              setEditingRow(row);
+            }}
+            size="small"
+          >
+            Edit
+          </Button>
         </TableCell>
       </TableRow>
+      <EditDrawerComponent
+        submitColor={"#254678"}
+        row={editingRow}
+        open={openEdit}
+        title={"Edit Concept"}
+        headerColor={"#dce6f1"}
+        deleteText={"Delete"}
+        cancelText={"Cancel"}
+        setOpenEdit={setOpenEdit}
+      />
 
       {hasChildren && (
         <TableRow>
-          <TableCell colSpan={4} sx={{ paddingBottom: 0, paddingTop: 0 }}>
+          <TableCell
+            colSpan={4}
+            sx={{ paddingBottom: 0, paddingTop: 0, padding: 0 }}
+          >
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Table size="small">
                 <TableHead>
                   <TableRow>
                     <TableCell sx={headerCellStyles}>Description</TableCell>
                     <TableCell sx={headerCellStyles} align="right">
+                      Code Value
+                    </TableCell>
+                    <TableCell
+                      sx={headerCellStyles}
+                      style={{ width: "15%" }}
+                      align="right"
+                    >
                       Previous
                     </TableCell>
-                    <TableCell sx={headerCellStyles} align="right">
+                    <TableCell
+                      sx={headerCellStyles}
+                      style={{ width: "15%" }}
+                      align="right"
+                    >
                       Current
                     </TableCell>
-                    <TableCell sx={headerCellStyles} align="right">
+                    <TableCell
+                      sx={[headerCellStyles]}
+                      style={{ width: "15%" }}
+                      align="right"
+                    >
                       Variance
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.detalles.map((child, i) => (
-                    <ExpandableRow key={i} row={child} level={level + 1} />
+                    <TableRow key={i}>
+                      {/* description */}
+                      <TableCell
+                        sx={{
+                          ...cellStyles,
+                          pl:
+                            2 +
+                            (level + 1) * 4 +
+                            getExtraIndent(child.concept_name),
+                        }}
+                      >
+                        {child.descripcion || child.detailLabel}
+                      </TableCell>
+
+                      {/* ✅ NOW render codeValue */}
+                      <TableCell sx={cellStyles} align="right">
+                        {child.codeValue ?? ""}
+                      </TableCell>
+
+                      <TableCell sx={cellStyles} align="right">
+                        <div
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 4px",
+                            fontSize: "12px",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          {formatIndianNumber(
+                            child.totBalancePrevious ??
+                              child.totPreviousBalance ??
+                              0
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell sx={cellStyles} align="right">
+                        <div
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 4px",
+                            fontSize: "12px",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          {(() => {
+                            const val =
+                              child.totBalanceCurrent ??
+                              child.totCurrentBalance ??
+                              0;
+                            return val < 0
+                              ? `(${formatIndianNumber(Math.abs(val))})`
+                              : formatIndianNumber(val);
+                          })()}
+                        </div>
+                      </TableCell>
+
+                      <TableCell sx={cellStyles} align="right">
+                        <div
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 4px",
+                            fontSize: "12px",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          {(() => {
+                            const val =
+                              child.totVariance ?? child.variance ?? 0;
+                            return val < 0
+                              ? `(${formatIndianNumber(Math.abs(val))})`
+                              : formatIndianNumber(val);
+                          })()}
+                        </div>
+                      </TableCell>
+                    </TableRow>
                   ))}
                 </TableBody>
               </Table>
@@ -149,7 +268,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
   );
 };
 
-const InvestmentAndDebenture = () => {
+const Example = () => {
   const [worksheet, setWorksheet] = useState([]);
 
   const fetchCdssList = () => {
@@ -170,32 +289,49 @@ const InvestmentAndDebenture = () => {
   }, []);
 
   return (
-    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
-      <Paper sx={{ overflowX: "auto" }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={headerCellStyles}>Description</TableCell>
-              <TableCell sx={headerCellStyles} align="right">
-                Previous
-              </TableCell>
-              <TableCell sx={headerCellStyles} align="right">
-                Current
-              </TableCell>
-              <TableCell sx={headerCellStyles} align="right">
-                Variance
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {worksheet.map((row) => (
-              <ExpandableRow key={row.conceptId} row={row} />
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-    </Box>
+    <>
+      <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+        <Paper sx={{ overflowX: "auto" }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={headerCellStyles}>Concept ID</TableCell>
+                <TableCell
+                  sx={headerCellStyles}
+                  style={{ width: "55%" }}
+                  align="start"
+                >
+                  Concept Name
+                </TableCell>
+                <TableCell
+                  sx={headerCellStyles}
+                  style={{ width: "15%" }}
+                  align="right"
+                >
+                  Concept Label
+                </TableCell>
+                <TableCell
+                  sx={headerCellStyles}
+                  style={{ width: "15%" }}
+                  align="right"
+                >
+                  Concept Order
+                </TableCell>
+                <TableCell sx={headerCellStyles} align="right">
+                  Actions
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {worksheet.map((row) => (
+                <ExpandableRow key={row.concept_id} row={row} />
+              ))}
+            </TableBody>
+          </Table>
+        </Paper>
+      </Box>
+    </>
   );
 };
 
-export default InvestmentAndDebenture;
+export default Example;

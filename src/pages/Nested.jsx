@@ -9,10 +9,12 @@ import {
   Paper,
   Collapse,
   IconButton,
+  Button,
 } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import axios from "axios";
 import { formatFinancial, formatIndianNumber } from "../utils/consonants";
+import EditDrawerComponent from "./EditDrawerComponent";
 
 const cellStyles = {
   border: "1px solid #aaa",
@@ -64,8 +66,10 @@ const columnWidths = {
 
 // 🔑 Recursive Row Component
 const ExpandableRow = ({ row, level = 0 }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const hasChildren = row.detalles && row.detalles.length > 0;
+    const [openEdit, setOpenEdit] = useState(false);
+    const [editingRow, setEditingRow] = useState(null);
 
   return (
     <>
@@ -103,8 +107,9 @@ const ExpandableRow = ({ row, level = 0 }) => {
               borderRadius: "4px",
             }}
           >
-           {formatFinancial(row.totBalanceCurrent ?? row.totCurrentBalance ?? 0)}
-
+            {formatFinancial(
+              row.totBalanceCurrent ?? row.totCurrentBalance ?? 0
+            )}
           </div>
         </TableCell>
         <TableCell sx={cellStyles} align="right">
@@ -124,12 +129,36 @@ const ExpandableRow = ({ row, level = 0 }) => {
             })()}
           </div>
         </TableCell>
+        <TableCell sx={cellStyles} align="right">
+          <div
+            style={{
+              display: "inline-block",
+              padding: "2px 4px",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+          >
+            <Button onClick={() => {
+              setOpenEdit(true);
+              setEditingRow(row);
+            }} size="small">Edit</Button>
+          </div>
+        </TableCell>
       </TableRow>
-
+      <EditDrawerComponent
+        submitColor={"#254678"}
+        row={editingRow}
+        open={openEdit}
+        title={"Edit Concept"}
+        headerColor={"#dce6f1"}
+        deleteText={"Delete"}
+        cancelText={"Cancel"}
+        setOpenEdit={setOpenEdit}
+      />
       {hasChildren && (
         <TableRow>
           <TableCell
-            colSpan={4}
+            colSpan={5}
             sx={{ paddingBottom: 0, paddingTop: 0, padding: 0 }}
           >
             <Collapse in={open} timeout="auto" unmountOnExit>
@@ -160,6 +189,13 @@ const ExpandableRow = ({ row, level = 0 }) => {
                       align="right"
                     >
                       Variance
+                    </TableCell>
+                    <TableCell
+                      sx={[headerCellStyles]}
+                      style={{ width: "15%" }}
+                      align="right"
+                    >
+                      Actions
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -239,6 +275,18 @@ const ExpandableRow = ({ row, level = 0 }) => {
                           })()}
                         </div>
                       </TableCell>
+                      <TableCell sx={cellStyles} align="right">
+                        <div
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 4px",
+                            fontSize: "12px",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          <Button size="small">Edit</Button>
+                        </div>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -298,6 +346,13 @@ const Example = () => {
                 align="right"
               >
                 Variance
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "15%" }}
+                align="right"
+              >
+                Actions
               </TableCell>
             </TableRow>
           </TableHead>
