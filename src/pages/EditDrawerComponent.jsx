@@ -2,28 +2,26 @@ import {
   Box,
   Button,
   Drawer,
-  FormControl,
   IconButton,
-  TextField,
   Typography,
 } from "@mui/material";
 import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
 
 const EditDrawerComponent = ({
-    submitColor,
+  submitColor = "#254678",
   row,
   open,
   title,
-  headerColor,
-  deleteText,
-  cancelText,
+  headerColor = "#dce6f1",
+  cancelText = "Cancel",
   setOpenEdit,
+  children,
+  onSubmit, // ✅ allow passing a submit callback
 }) => {
-  //   const [open, setOpen] = React.useState(false);
-  const [headerTextColor, setHeaderTextColor] = React.useState("");
-  const handleDelete = () => {};
 
+  console.log(row);
+  
   const onClose = () => {
     setOpenEdit(false);
   };
@@ -31,122 +29,84 @@ const EditDrawerComponent = ({
   const onCancel = () => {
     onClose();
   };
+
   return (
-    <>
-      <Drawer
-        anchor="right"
-        open={open}
-        onClose={onClose}
-        ModalProps={{
-          keepMounted: true,
-          sx: { zIndex: 2000 }, // Ensure drawer is on top
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={onClose}
+      ModalProps={{
+        keepMounted: true,
+        sx: { zIndex: 2000 }, // Ensure drawer is on top
+      }}
+    >
+      <Box
+        sx={{
+          width: { xs: "300px", md: "700px" },
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
+        {/* Header */}
         <Box
-          id="drawer-container"
           sx={{
-            p: 0,
-            width: { xs: "300px", md: "700px" },
-            height: "100%",
             display: "flex",
-            flexDirection: "column",
+            justifyContent: "space-between",
+            bgcolor: headerColor,
+            alignItems: "center",
           }}
         >
-          <Box
+          <Typography
+            variant="h6"
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              bgcolor: headerColor,
-              alignItems: "center",
+              fontWeight: "bold",
+              color: "#000",
+              padding: "0.5rem 1rem",
             }}
           >
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{
-                fontWeight: "bold",
-                bgcolor: headerColor,
-                color: headerTextColor,
-                padding: "0.5rem 1rem 0.5rem 1rem",
-              }}
-            >
-              {title}
-            </Typography>
-            <IconButton
-              onClick={onClose}
-              sx={{
-                width: "2.5rem",
-                height: "2.5rem",
-                marginRight: "0.5rem",
-              }}
-            >
-              <CloseIcon sx={{ fontSize: "1.5rem", color: "#000000" }} />
-            </IconButton>
-          </Box>
-          <Box
-            sx={{
-              width: { xs: "300px", md: "500px" },
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-            }}
-          >
-            {/* <Typography
-              variant="body2"
-              gutterBottom
-              sx={{ padding: "1rem 1rem 0 1rem" }}
-            >
-              Type <strong>"delete"</strong> below to confirm. This action is
-              permanent and cannot be undone.
-            </Typography> */}
-          </Box>
-          {/* <FormControl
-            size="small"
-            variant="outlined"
-            sx={{ m: 2, width: { xs: "88%", md: "95%" } }}
-          >
-            <TextField
-              size="small"
-              label="Type 'delete' to confirm"
-              value={deleteText}
-              onChange={(e) => setDeleteText(e.target.value)}
-              fullWidth
-            />
-          </FormControl> */}
-          {
-            JSON.stringify(row, null, 2)
-          }
-          <Box sx={{ flexGrow: 1 }} />
-          <Box
-            sx={{
-              mt: 0,
-              display: "flex",
-              justifyContent: "space-between",
-              p: 2,
-            }}
-          >
-            <Button
-              sx={{ borderColor: "#233B5D", color: "#233B5D" }}
-              variant="outlined"
-              size="small"
-              onClick={onCancel}
-            >
-              {cancelText}
-            </Button>
-            <Button
-              // startIcon={<DeleteForeverIcon />}
-              size="small"
-              variant="contained"
-              bgcolor={submitColor}
-              onClick={handleDelete}
-              disabled={deleteText.toLowerCase() !== "delete"}
-            >
-              Submit
-            </Button>
-          </Box>
+            {title}
+          </Typography>
+          <IconButton onClick={onClose} sx={{ mr: 1 }}>
+            <CloseIcon sx={{ fontSize: "1.5rem", color: "#000000" }} />
+          </IconButton>
         </Box>
-      </Drawer>
-    </>
+
+        {/* Content */}
+        <Box sx={{ flex: 1, p: 0, overflowY: "auto" }}>{children}</Box>
+
+        {/* Footer */}
+        <Box
+          sx={{
+            mt: "auto",
+            display: "flex",
+            justifyContent: "space-between",
+            p: 2,
+            borderTop: "1px solid #ddd",
+          }}
+        >
+          <Button
+            sx={{ borderColor: "#233B5D", color: "#233B5D" }}
+            variant="outlined"
+            size="small"
+            onClick={onCancel}
+          >
+            {cancelText}
+          </Button>
+          <Button
+            size="small"
+            variant="contained"
+            sx={{
+              bgcolor: submitColor,
+              "&:hover": { bgcolor: "#1d365c" }, // darker shade
+            }}
+            onClick={() => onSubmit?.(row)} // pass row back
+          >
+            Submit
+          </Button>
+        </Box>
+      </Box>
+    </Drawer>
   );
 };
 

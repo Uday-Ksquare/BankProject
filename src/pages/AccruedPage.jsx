@@ -219,7 +219,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
                       style={{ width: "15%" }}
                       align="right"
                     >
-                      Other Borrowings
+                      FOREIGN CURRENCY
                     </TableCell>
                     {/* <TableCell
                       sx={[headerCellStyles]}
@@ -335,7 +335,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
   );
 };
 
-const SuppDBorrowings = () => {
+const AccruedPage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -349,7 +349,7 @@ const SuppDBorrowings = () => {
   const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
     axios
       .get(
-        `http://138.128.246.29:8080/api/dynamic/screens/scr_supp_d_borrowings/202502?pageNumber=${
+        `http://138.128.246.29:8080/api/dynamic/screens/scr_accrued_interest/202502?pageNumber=${
           pageNumber + 1
         }&pageSize=${pageSize}`
       )
@@ -399,7 +399,7 @@ const SuppDBorrowings = () => {
                 style={{ width: "15%" }}
                 align="right"
               >
-                Other Borrowings
+                FOREIGN CURRENCY
               </TableCell>
               {/* <TableCell
                 sx={headerCellStyles}
@@ -438,4 +438,4 @@ const SuppDBorrowings = () => {
   );
 };
 
-export default SuppDBorrowings;
+export default AccruedPage;

@@ -10,11 +10,16 @@ import {
   Collapse,
   IconButton,
   Button,
+  Pagination,
+  Stack,
+  TablePagination,
 } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import axios from "axios";
 import { formatFinancial, formatIndianNumber } from "../utils/consonants";
 import EditDrawerComponent from "./EditDrawerComponent";
+import { useSearchParams } from "react-router-dom";
+import FormTextField from "../components/FormTextField";
 
 const cellStyles = {
   border: "1px solid #aaa",
@@ -68,8 +73,22 @@ const columnWidths = {
 const ExpandableRow = ({ row, level = 0 }) => {
   const [open, setOpen] = useState(true);
   const hasChildren = row.detalles && row.detalles.length > 0;
-    const [openEdit, setOpenEdit] = useState(false);
-    const [editingRow, setEditingRow] = useState(null);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editingRow, setEditingRow] = useState(null);
+  const [editFields, setEditFields] = useState(editingRow?.allColumns || []);
+
+  useEffect(() => {
+    setEditFields(editingRow?.allColumns || []);
+  }, [editingRow]);
+
+  // handler for updating specific field
+  const handleFieldChange = (index, newValue) => {
+    setEditFields((prev) =>
+      prev.map((field, i) =>
+        i === index ? { ...field, columnValue: newValue } : field
+      )
+    );
+  };
 
   return (
     <>
@@ -94,8 +113,9 @@ const ExpandableRow = ({ row, level = 0 }) => {
         {/* parent row does NOT show codeValue */}
 
         <TableCell sx={cellStyles} align="right">
+          {/* {row?.allColumns[0]?.columnValue} */}
           {formatFinancial(
-            row.totBalancePrevious ?? row.totPreviousBalance ?? 0
+            row?.allColumns[0]?.columnValue
           )}
         </TableCell>
         <TableCell sx={cellStyles} align="right">
@@ -107,8 +127,9 @@ const ExpandableRow = ({ row, level = 0 }) => {
               borderRadius: "4px",
             }}
           >
+            {/* {row?.allColumns[1]?.columnValue} */}
             {formatFinancial(
-              row.totBalanceCurrent ?? row.totCurrentBalance ?? 0
+              row?.allColumns[1]?.columnValue
             )}
           </div>
         </TableCell>
@@ -121,12 +142,10 @@ const ExpandableRow = ({ row, level = 0 }) => {
               borderRadius: "4px",
             }}
           >
-            {(() => {
-              const val = row.totVariance ?? row.variance ?? 0;
-              return val < 0
-                ? `(${formatIndianNumber(Math.abs(val))})`
-                : formatIndianNumber(val);
-            })()}
+            {/* {row?.allColumns[2]?.columnValue} */}
+            {formatFinancial(
+              row?.allColumns[2]?.columnValue
+            )}
           </div>
         </TableCell>
         <TableCell sx={cellStyles} align="right">
@@ -138,10 +157,15 @@ const ExpandableRow = ({ row, level = 0 }) => {
               borderRadius: "4px",
             }}
           >
-            <Button onClick={() => {
-              setOpenEdit(true);
-              setEditingRow(row);
-            }} size="small">Edit</Button>
+            <Button
+              onClick={() => {
+                setOpenEdit(true);
+                setEditingRow(row);
+              }}
+              size="small"
+            >
+              Edit
+            </Button>
           </div>
         </TableCell>
       </TableRow>
@@ -154,7 +178,22 @@ const ExpandableRow = ({ row, level = 0 }) => {
         deleteText={"Delete"}
         cancelText={"Cancel"}
         setOpenEdit={setOpenEdit}
-      />
+      >
+        <Box sx={{ display: "flex", gap: 2, flexDirection: "column", p: 2 }}>
+          {editFields.map((field, index) => (
+            <FormTextField
+              key={index}
+              value={field.columnValue}
+              name={field.columnName}
+              index={index}
+              onChange={handleFieldChange}
+            />
+          ))}
+
+          {/* For debugging */}
+          <pre>{JSON.stringify(editFields, null, 2)}</pre>
+        </Box>
+      </EditDrawerComponent>
       {hasChildren && (
         <TableRow>
           <TableCell
@@ -166,22 +205,22 @@ const ExpandableRow = ({ row, level = 0 }) => {
                 <TableHead>
                   <TableRow>
                     <TableCell sx={headerCellStyles}>Description</TableCell>
-                    <TableCell sx={headerCellStyles} align="right">
+                    {/* <TableCell sx={headerCellStyles} align="right">
                       Code Value
+                    </TableCell> */}
+                    <TableCell
+                      sx={headerCellStyles}
+                      style={{ width: "15%" }}
+                      align="right"
+                    >
+                      Current Period
                     </TableCell>
                     <TableCell
                       sx={headerCellStyles}
                       style={{ width: "15%" }}
                       align="right"
                     >
-                      Previous
-                    </TableCell>
-                    <TableCell
-                      sx={headerCellStyles}
-                      style={{ width: "15%" }}
-                      align="right"
-                    >
-                      Current
+                      Previous Period
                     </TableCell>
                     <TableCell
                       sx={[headerCellStyles]}
@@ -216,9 +255,9 @@ const ExpandableRow = ({ row, level = 0 }) => {
                       </TableCell>
 
                       {/* ✅ NOW render codeValue */}
-                      <TableCell sx={cellStyles} align="right">
+                      {/* <TableCell sx={cellStyles} align="right">
                         {child.codeValue ?? ""}
-                      </TableCell>
+                      </TableCell> */}
 
                       <TableCell sx={cellStyles} align="right">
                         <div
@@ -229,11 +268,13 @@ const ExpandableRow = ({ row, level = 0 }) => {
                             borderRadius: "4px",
                           }}
                         >
-                          {formatIndianNumber(
+                          {formatFinancial(row?.allColumns[0]?.columnValue)}
+                          {/* {row?.allColumns[0]?.columnValue} */}
+                          {/* {formatIndianNumber(
                             child.totBalancePrevious ??
                               child.totPreviousBalance ??
                               0
-                          )}
+                          )} */}
                         </div>
                       </TableCell>
                       <TableCell sx={cellStyles} align="right">
@@ -245,7 +286,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
                             borderRadius: "4px",
                           }}
                         >
-                          {(() => {
+                          {/* {(() => {
                             const val =
                               child.totBalanceCurrent ??
                               child.totCurrentBalance ??
@@ -253,7 +294,9 @@ const ExpandableRow = ({ row, level = 0 }) => {
                             return val < 0
                               ? `(${formatIndianNumber(Math.abs(val))})`
                               : formatIndianNumber(val);
-                          })()}
+                          })()} */}
+                          {/* {row?.allColumns[1]?.columnValue} */}
+                          {formatFinancial(row?.allColumns[1]?.columnValue)}
                         </div>
                       </TableCell>
 
@@ -266,13 +309,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
                             borderRadius: "4px",
                           }}
                         >
-                          {(() => {
-                            const val =
-                              child.totVariance ?? child.variance ?? 0;
-                            return val < 0
-                              ? `(${formatIndianNumber(Math.abs(val))})`
-                              : formatIndianNumber(val);
-                          })()}
+                          {formatFinancial(row?.allColumns[2]?.columnValue)}
                         </div>
                       </TableCell>
                       <TableCell sx={cellStyles} align="right">
@@ -299,16 +336,26 @@ const ExpandableRow = ({ row, level = 0 }) => {
   );
 };
 
-const Example = () => {
-  const [worksheet, setWorksheet] = useState([]);
+const Nested = () => {
+  const [worksheet, setWorksheet] = useState({});
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const fetchCdssList = () => {
+  // read from URL, fallback defaults
+  const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
+  const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
+
+  const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
+  const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
+
+  const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
     axios
       .get(
-        "http://138.128.246.29:8080/api/dynamic/screens/scr_worksheet/202502"
+        `http://138.128.246.29:8080/api/dynamic/screens/scr_worksheet/202502?pageNumber=${
+          pageNumber + 1
+        }&pageSize=${pageSize}`
       )
       .then((response) => {
-        setWorksheet(response.data?.data || []);
+        setWorksheet(response?.data || {});
       })
       .catch((error) => {
         console.log(error);
@@ -316,8 +363,23 @@ const Example = () => {
   };
 
   useEffect(() => {
-    fetchCdssList();
-  }, []);
+    fetchCdssList(page, rowsPerPage);
+
+    // update URL query string whenever page/size changes
+    setSearchParams({
+      page: (page + 1).toString(),
+      pageSize: rowsPerPage.toString(),
+    });
+  }, [page, rowsPerPage]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // reset to first page
+  };
 
   return (
     <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
@@ -331,14 +393,14 @@ const Example = () => {
                 style={{ width: "15%" }}
                 align="right"
               >
-                Previous
+                Current Period
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "15%" }}
                 align="right"
               >
-                Current
+                Previous Period
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -357,14 +419,24 @@ const Example = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {worksheet.map((row) => (
+            {(worksheet?.screens || []).map((row) => (
               <ExpandableRow key={row.conceptId} row={row} />
             ))}
           </TableBody>
         </Table>
       </Paper>
+      {/* Pagination Control */}
+      <TablePagination
+        component="div"
+        count={worksheet?.totalItems || 0}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[5, 10, 25, 50]}
+      />
     </Box>
   );
 };
 
-export default Example;
+export default Nested;

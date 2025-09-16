@@ -19,6 +19,7 @@ import axios from "axios";
 import { formatFinancial, formatIndianNumber } from "../utils/consonants";
 import EditDrawerComponent from "./EditDrawerComponent";
 import { useSearchParams } from "react-router-dom";
+import FormTextField from "../components/FormTextField";
 
 const cellStyles = {
   border: "1px solid #aaa",
@@ -74,6 +75,20 @@ const ExpandableRow = ({ row, level = 0 }) => {
   const hasChildren = row.detalles && row.detalles.length > 0;
   const [openEdit, setOpenEdit] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
+  const [editFields, setEditFields] = useState(editingRow?.allColumns || []);
+
+  useEffect(() => {
+    setEditFields(editingRow?.allColumns || []);
+  }, [editingRow]);
+
+  // handler for updating specific field
+  const handleFieldChange = (index, newValue) => {
+    setEditFields((prev) =>
+      prev.map((field, i) =>
+        i === index ? { ...field, columnValue: newValue } : field
+      )
+    );
+  };
 
   return (
     <>
@@ -113,28 +128,8 @@ const ExpandableRow = ({ row, level = 0 }) => {
             }}
           >
             {row?.allColumns[1]?.columnValue}
-            {/* {formatFinancial(
-              row.totBalanceCurrent ?? row.totCurrentBalance ?? 0
-            )} */}
           </div>
         </TableCell>
-        {/* <TableCell sx={cellStyles} align="right">
-          <div
-            style={{
-              display: "inline-block",
-              padding: "2px 4px",
-              fontSize: "12px",
-              borderRadius: "4px",
-            }}
-          >
-            {(() => {
-              const val = row.totVariance ?? row.variance ?? 0;
-              return val < 0
-                ? `(${formatIndianNumber(Math.abs(val))})`
-                : formatIndianNumber(val);
-            })()}
-          </div>
-        </TableCell> */}
         <TableCell sx={cellStyles} align="right">
           <div
             style={{
@@ -165,7 +160,22 @@ const ExpandableRow = ({ row, level = 0 }) => {
         deleteText={"Delete"}
         cancelText={"Cancel"}
         setOpenEdit={setOpenEdit}
-      />
+      >
+        <Box sx={{ display: "flex", gap: 2, flexDirection: "column", p: 2 }}>
+          {editFields.map((field, index) => (
+            <FormTextField
+              key={index}
+              value={field.columnValue}
+              name={field.columnName}
+              index={index}
+              onChange={handleFieldChange}
+            />
+          ))}
+
+          {/* For debugging */}
+          <pre>{JSON.stringify(editFields, null, 2)}</pre>
+        </Box>
+      </EditDrawerComponent>
       {hasChildren && (
         <TableRow>
           <TableCell

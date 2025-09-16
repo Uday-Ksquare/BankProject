@@ -30,6 +30,12 @@ import DueFromBanksPage from "./pages/DueFromBanksPage.jsx";
 import InterestRatesPage from "./pages/InterestRatesPage.jsx";
 import CurrencyPositionPage from "./pages/CurrencyPositionPage.jsx";
 import PROneImportPage from "./pages/PROneImportPage.jsx";
+import SettlementsAccountsTwoPage from "./pages/SettlementsAccountsTwoPage.jsx";
+import InvestmentAndDebunturetwoPage from "./pages/InvestmentAndDebunturetwoPage.jsx";
+import TradeCreditAndAdvanceTwoPage from "./pages/TradeCreditAndAdvanceTwoPage.jsx";
+import FinancialDerivativesTwoPage from "./pages/FinancialDerivativesTwoPage.jsx";
+import OverDraftPage from "./pages/OverDraftPage.jsx";
+import AccruedPage from "./pages/AccruedPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -100,16 +106,32 @@ const router = createBrowserRouter([
             element: <FinancialDerivativesPage />,
           },
           {
+            path: "/scr_supp_e2_financial_derivatives",
+            element: <FinancialDerivativesTwoPage />,
+          },
+          {
             path: "/scr_supp_f_trade_credit_and_advance",
             element: <TradeCreditAndAdvancePage />,
+          },
+          {
+            path:"/scr_supp_f2_trade_credit_and_advance",
+            element:<TradeCreditAndAdvanceTwoPage/>
           },
           {
             path: "/scr_supp_h_investment_and_debenture",
             element: <InvestmentAndDebenture />,
           },
           {
+            path:"/scr_supp_h2_investment_and_debenture",
+            element:<InvestmentAndDebunturetwoPage/>
+          },
+          {
             path: "/scr_supp_i_settlement_accounts ",
             element: <SettlementAccountsPage />,
+          },
+          {
+            path:"/scr_supp_i2_settlement_accounts ",
+            element:<SettlementsAccountsTwoPage/>
           },
           {
             path: "/scr_supp_j_payables_and_receivables",
@@ -135,6 +157,14 @@ const router = createBrowserRouter([
             path: "scr_pr01import",
             element: <PROneImportPage />,
           },
+          {
+            path:"/scr_overdraft",
+            element:<OverDraftPage/>
+          },
+          {
+            path:"/scr_accrued_interest",
+            element:<AccruedPage/>
+          }
         ],
       },
 

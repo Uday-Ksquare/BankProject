@@ -10,11 +10,16 @@ import {
   Collapse,
   IconButton,
   Button,
+  Pagination,
+  Stack,
+  TablePagination,
 } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import axios from "axios";
 import { formatFinancial, formatIndianNumber } from "../utils/consonants";
 import EditDrawerComponent from "./EditDrawerComponent";
+import { useSearchParams } from "react-router-dom";
+import FormTextField from "../components/FormTextField";
 
 const cellStyles = {
   border: "1px solid #aaa",
@@ -66,35 +71,52 @@ const columnWidths = {
 
 // 🔑 Recursive Row Component
 const ExpandableRow = ({ row, level = 0 }) => {
+  const [open, setOpen] = useState(true);
+  const hasChildren = row.detalles && row.detalles.length > 0;
   const [openEdit, setOpenEdit] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
-  const [open, setOpen] = useState(false);
-  const hasChildren = row.detalles && row.detalles.length > 0;
+  const [editFields, setEditFields] = useState(editingRow?.allColumns || []);
+
+  useEffect(() => {
+    setEditFields(editingRow?.allColumns || []);
+  }, [editingRow]);
+
+  // handler for updating specific field
+  const handleFieldChange = (index, newValue) => {
+    setEditFields((prev) =>
+      prev.map((field, i) =>
+        i === index ? { ...field, columnValue: newValue } : field
+      )
+    );
+  };
 
   return (
     <>
       {/* parent row */}
       <TableRow>
-        <TableCell sx={cellStyles} align="right">
+        <TableCell
+          sx={{
+            ...(level === 0 ? groupHeaderStyles : cellStyles),
+            pl: 2 + level * 4 + getExtraIndent(row.descripcion),
+            display: "flex",
+            gap: 1,
+          }}
+        >
           {hasChildren && (
             <IconButton size="small" onClick={() => setOpen(!open)}>
               {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </IconButton>
           )}
-          {row.concept_id}
+          {row.descripcion || row.detailLabel}
         </TableCell>
 
         {/* parent row does NOT show codeValue */}
 
-        <TableCell
-          sx={{
-            ...(level === 0 ? groupHeaderStyles : cellStyles),
-            pl: 2 + level * 4 + getExtraIndent(row.concept_name.toString()), // base + hierarchy + rules
-            display: "flex",
-            gap: 1,
-          }}
-        >
-          {row?.concept_name}
+        <TableCell sx={cellStyles} align="right">
+          {/* {row?.allColumns[0]?.columnValue} */}
+          {formatFinancial(
+            row?.allColumns[0]?.columnValue
+          )}
         </TableCell>
         <TableCell sx={cellStyles} align="right">
           <div
@@ -105,9 +127,26 @@ const ExpandableRow = ({ row, level = 0 }) => {
               borderRadius: "4px",
             }}
           >
-            {row?.concept_label}
+            {/* {row?.allColumns[1]?.columnValue} */}
+            {formatFinancial(
+              row?.allColumns[1]?.columnValue
+            )}
           </div>
         </TableCell>
+        {/* <TableCell sx={cellStyles} align="right">
+          <div
+            style={{
+              display: "inline-block",
+              padding: "2px 4px",
+              fontSize: "12px",
+              borderRadius: "4px",
+            }}
+          >
+            {formatFinancial(
+              row?.allColumns[2]?.columnValue
+            )}
+          </div>
+        </TableCell> */}
         <TableCell sx={cellStyles} align="right">
           <div
             style={{
@@ -117,19 +156,16 @@ const ExpandableRow = ({ row, level = 0 }) => {
               borderRadius: "4px",
             }}
           >
-            {row?.concept_order}
+            <Button
+              onClick={() => {
+                setOpenEdit(true);
+                setEditingRow(row);
+              }}
+              size="small"
+            >
+              Edit
+            </Button>
           </div>
-        </TableCell>
-        <TableCell sx={cellStyles}>
-          <Button
-            onClick={() => {
-              setOpenEdit(true);
-              setEditingRow(row);
-            }}
-            size="small"
-          >
-            Edit
-          </Button>
         </TableCell>
       </TableRow>
       <EditDrawerComponent
@@ -141,12 +177,26 @@ const ExpandableRow = ({ row, level = 0 }) => {
         deleteText={"Delete"}
         cancelText={"Cancel"}
         setOpenEdit={setOpenEdit}
-      />
+      >
+        <Box sx={{ display: "flex", gap: 2, flexDirection: "column", p: 2 }}>
+          {editFields.map((field, index) => (
+            <FormTextField
+              key={index}
+              value={field.columnValue}
+              name={field.columnName}
+              index={index}
+              onChange={handleFieldChange}
+            />
+          ))}
 
+          {/* For debugging */}
+          <pre>{JSON.stringify(editFields, null, 2)}</pre>
+        </Box>
+      </EditDrawerComponent>
       {hasChildren && (
         <TableRow>
           <TableCell
-            colSpan={4}
+            colSpan={5}
             sx={{ paddingBottom: 0, paddingTop: 0, padding: 0 }}
           >
             <Collapse in={open} timeout="auto" unmountOnExit>
@@ -154,29 +204,36 @@ const ExpandableRow = ({ row, level = 0 }) => {
                 <TableHead>
                   <TableRow>
                     <TableCell sx={headerCellStyles}>Description</TableCell>
-                    <TableCell sx={headerCellStyles} align="right">
+                    {/* <TableCell sx={headerCellStyles} align="right">
                       Code Value
+                    </TableCell> */}
+                    <TableCell
+                      sx={headerCellStyles}
+                      style={{ width: "15%" }}
+                      align="right"
+                    >
+                      Current Period
                     </TableCell>
                     <TableCell
                       sx={headerCellStyles}
                       style={{ width: "15%" }}
                       align="right"
                     >
-                      Previous
+                      FOREIGN CURRENCY
                     </TableCell>
-                    <TableCell
-                      sx={headerCellStyles}
-                      style={{ width: "15%" }}
-                      align="right"
-                    >
-                      Current
-                    </TableCell>
-                    <TableCell
+                    {/* <TableCell
                       sx={[headerCellStyles]}
                       style={{ width: "15%" }}
                       align="right"
                     >
                       Variance
+                    </TableCell> */}
+                    <TableCell
+                      sx={[headerCellStyles]}
+                      style={{ width: "15%" }}
+                      align="right"
+                    >
+                      Actions
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -190,16 +247,16 @@ const ExpandableRow = ({ row, level = 0 }) => {
                           pl:
                             2 +
                             (level + 1) * 4 +
-                            getExtraIndent(child.concept_name),
+                            getExtraIndent(child.descripcion),
                         }}
                       >
                         {child.descripcion || child.detailLabel}
                       </TableCell>
 
                       {/* ✅ NOW render codeValue */}
-                      <TableCell sx={cellStyles} align="right">
+                      {/* <TableCell sx={cellStyles} align="right">
                         {child.codeValue ?? ""}
-                      </TableCell>
+                      </TableCell> */}
 
                       <TableCell sx={cellStyles} align="right">
                         <div
@@ -210,11 +267,13 @@ const ExpandableRow = ({ row, level = 0 }) => {
                             borderRadius: "4px",
                           }}
                         >
-                          {formatIndianNumber(
+                          {formatFinancial(row?.allColumns[0]?.columnValue)}
+                          {/* {row?.allColumns[0]?.columnValue} */}
+                          {/* {formatIndianNumber(
                             child.totBalancePrevious ??
                               child.totPreviousBalance ??
                               0
-                          )}
+                          )} */}
                         </div>
                       </TableCell>
                       <TableCell sx={cellStyles} align="right">
@@ -226,7 +285,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
                             borderRadius: "4px",
                           }}
                         >
-                          {(() => {
+                          {/* {(() => {
                             const val =
                               child.totBalanceCurrent ??
                               child.totCurrentBalance ??
@@ -234,10 +293,24 @@ const ExpandableRow = ({ row, level = 0 }) => {
                             return val < 0
                               ? `(${formatIndianNumber(Math.abs(val))})`
                               : formatIndianNumber(val);
-                          })()}
+                          })()} */}
+                          {/* {row?.allColumns[1]?.columnValue} */}
+                          {formatFinancial(row?.allColumns[1]?.columnValue)}
                         </div>
                       </TableCell>
 
+                      {/* <TableCell sx={cellStyles} align="right">
+                        <div
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 4px",
+                            fontSize: "12px",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          {formatFinancial(row?.allColumns[2]?.columnValue)}
+                        </div>
+                      </TableCell> */}
                       <TableCell sx={cellStyles} align="right">
                         <div
                           style={{
@@ -247,13 +320,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
                             borderRadius: "4px",
                           }}
                         >
-                          {(() => {
-                            const val =
-                              child.totVariance ?? child.variance ?? 0;
-                            return val < 0
-                              ? `(${formatIndianNumber(Math.abs(val))})`
-                              : formatIndianNumber(val);
-                          })()}
+                          <Button size="small">Edit</Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -268,16 +335,26 @@ const ExpandableRow = ({ row, level = 0 }) => {
   );
 };
 
-const Example = () => {
-  const [worksheet, setWorksheet] = useState([]);
+const InvestmentAndDebenture = () => {
+  const [worksheet, setWorksheet] = useState({});
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const fetchCdssList = () => {
+  // read from URL, fallback defaults
+  const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
+  const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
+
+  const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
+  const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
+
+  const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
     axios
       .get(
-        "http://138.128.246.29:8080/api/dynamic/screens/scr_supp_h_investment_and_debenture/202502"
+        `http://138.128.246.29:8080/api/dynamic/screens/scr_supp_h_investment_and_debenture/202502?pageNumber=${
+          pageNumber + 1
+        }&pageSize=${pageSize}`
       )
       .then((response) => {
-        setWorksheet(response.data?.data || []);
+        setWorksheet(response?.data || {});
       })
       .catch((error) => {
         console.log(error);
@@ -285,53 +362,80 @@ const Example = () => {
   };
 
   useEffect(() => {
-    fetchCdssList();
-  }, []);
+    fetchCdssList(page, rowsPerPage);
+
+    // update URL query string whenever page/size changes
+    setSearchParams({
+      page: (page + 1).toString(),
+      pageSize: rowsPerPage.toString(),
+    });
+  }, [page, rowsPerPage]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // reset to first page
+  };
 
   return (
-    <>
-      <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
-        <Paper sx={{ overflowX: "auto" }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={headerCellStyles}>Concept ID</TableCell>
-                <TableCell
-                  sx={headerCellStyles}
-                  style={{ width: "55%" }}
-                  align="start"
-                >
-                  Concept Name
-                </TableCell>
-                <TableCell
-                  sx={headerCellStyles}
-                  style={{ width: "15%" }}
-                  align="right"
-                >
-                  Concept Label
-                </TableCell>
-                <TableCell
-                  sx={headerCellStyles}
-                  style={{ width: "15%" }}
-                  align="right"
-                >
-                  Concept Order
-                </TableCell>
-                <TableCell sx={headerCellStyles} align="right">
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {worksheet.map((row) => (
-                <ExpandableRow key={row.concept_id} row={row} />
-              ))}
-            </TableBody>
-          </Table>
-        </Paper>
-      </Box>
-    </>
+    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+      <Paper sx={{ overflowX: "auto" }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell sx={headerCellStyles}>Description</TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "15%" }}
+                align="right"
+              >
+                Current Period
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "15%" }}
+                align="right"
+              >
+                FOREIGN CURRENCY
+              </TableCell>
+              {/* <TableCell
+                sx={headerCellStyles}
+                style={{ width: "15%" }}
+                align="right"
+              >
+                Variance
+              </TableCell> */}
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "15%" }}
+                align="right"
+              >
+                Actions
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {(worksheet?.screens || []).map((row) => (
+              <ExpandableRow key={row.conceptId} row={row} />
+            ))}
+          </TableBody>
+        </Table>
+      </Paper>
+      {/* Pagination Control */}
+      <TablePagination
+        component="div"
+        count={worksheet?.totalItems || 0}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[5, 10, 25, 50]}
+      />
+    </Box>
   );
 };
 
-export default Example;
+export default InvestmentAndDebenture;
