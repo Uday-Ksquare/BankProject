@@ -29,6 +29,7 @@ import DueToBankspage from "./pages/DueToBankspage.jsx";
 import DueFromBanksPage from "./pages/DueFromBanksPage.jsx";
 import InterestRatesPage from "./pages/InterestRatesPage.jsx";
 import CurrencyPositionPage from "./pages/CurrencyPositionPage.jsx";
+import PROneImportPage from "./pages/PROneImportPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -111,25 +112,29 @@ const router = createBrowserRouter([
             element: <SettlementAccountsPage />,
           },
           {
-            path:"/scr_supp_j_payables_and_receivables",
-            element:<PayablesAndReceivablesPage/>
+            path: "/scr_supp_j_payables_and_receivables",
+            element: <PayablesAndReceivablesPage />,
           },
           {
-            path:"/scr_supp_K1_due_to_banks",
-            element:<DueToBankspage/>
+            path: "/scr_supp_K1_due_to_banks",
+            element: <DueToBankspage />,
           },
           {
-            path:"/scr_supp_K2_due_from_banks",
-            element:<DueFromBanksPage/>
+            path: "/scr_supp_K2_due_from_banks",
+            element: <DueFromBanksPage />,
           },
           {
-            path:"/scr_supp_l_interest_rates",
-            element:<InterestRatesPage/>
+            path: "/scr_supp_l_interest_rates",
+            element: <InterestRatesPage />,
           },
           {
-            path:"/scr_supp_m_currency_positions",
-            element:<CurrencyPositionPage/>
-          }
+            path: "/scr_supp_m_currency_positions",
+            element: <CurrencyPositionPage />,
+          },
+          {
+            path: "scr_pr01import",
+            element: <PROneImportPage />,
+          },
         ],
       },
 
