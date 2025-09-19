@@ -9,7 +9,7 @@ const FinLnsPage = () => {
 
   const fetchCdssList = () => {
     axios
-      .get("http://138.128.246.29:8080/api/dynamic/screens/scr_finlns/202502")
+      .get("http://34.51.72.135:8080/api/dynamic/screens/scr_finlns/202502")
       .then((response) => {
         setData(response.data?.data);
       })

@@ -350,7 +350,7 @@ const Nested = () => {
   const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
     axios
       .get(
-        `http://138.128.246.29:8080/api/dynamic/screens/scr_worksheet/202502?pageNumber=${
+        `http://34.51.72.135:8080/api/dynamic/screens/scr_worksheet/202502?pageNumber=${
           pageNumber + 1
         }&pageSize=${pageSize}`
       )

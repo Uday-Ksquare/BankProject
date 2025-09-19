@@ -155,7 +155,7 @@ const CurrencyPositionPage = () => {
   const fetchCdssList = () => {
     axios
       .get(
-        "http://138.128.246.29:8080/api/dynamic/screens/scr_supp_m_currency_positions/202502"
+        "http://34.51.72.135:8080/api/dynamic/screens/scr_supp_m_currency_positions/202502"
       )
       .then((response) => {
         setWorksheet(response.data?.data || []);

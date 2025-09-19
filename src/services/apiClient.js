@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "http://138.128.246.29:8080/api/dynamic/screens/",
+  baseURL: "http://34.51.72.135:8080/api/dynamic/screens/",
   headers: {
     "Content-Type": "application/json",
   },

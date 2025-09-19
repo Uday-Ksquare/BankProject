@@ -7,7 +7,7 @@ const DdaLstPage = () => {
   const [ddaList, setDdaList] = React.useState([]);
   const fetchCdssList = () => {
     axios
-      .get("http://138.128.246.29:8080/api/dynamic/screens/scr_ddalst/202502")
+      .get("http://34.51.72.135:8080/api/dynamic/screens/scr_ddalst/202502")
       .then((response) => {
         setDdaList(response.data?.data);
       })

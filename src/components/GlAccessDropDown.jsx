@@ -6,7 +6,7 @@ const GlAccessDropDown = ({ period, setPeriod }) => {
 
   const fetchGlPeriods = async () => {
     try {
-      const res = await fetch("http://138.128.246.29:8080/api/import/glperiods");
+      const res = await fetch("http://34.51.72.135:8080/api/import/glperiods");
       const data = await res.json();
       setPeriods(data.data || []);
     } catch (err) {
