@@ -13,6 +13,7 @@ import {
   Pagination,
   Stack,
   TablePagination,
+  Typography,
 } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import axios from "axios";
@@ -20,6 +21,7 @@ import { formatFinancial, formatIndianNumber } from "../utils/consonants";
 import EditDrawerComponent from "./EditDrawerComponent";
 import { useSearchParams } from "react-router-dom";
 import FormTextField from "../components/FormTextField";
+import TableHeadingCard from "../components/TableHeadingCard";
 
 const cellStyles = {
   border: "1px solid #aaa",
@@ -114,9 +116,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
 
         <TableCell sx={cellStyles} align="right">
           {/* {row?.allColumns[0]?.columnValue} */}
-          {formatFinancial(
-            row?.allColumns[0]?.columnValue
-          )}
+          {formatFinancial(row?.allColumns[0]?.columnValue)}
         </TableCell>
         <TableCell sx={cellStyles} align="right">
           <div
@@ -128,9 +128,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
             }}
           >
             {/* {row?.allColumns[1]?.columnValue} */}
-            {formatFinancial(
-              row?.allColumns[1]?.columnValue
-            )}
+            {formatFinancial(row?.allColumns[1]?.columnValue)}
           </div>
         </TableCell>
         <TableCell sx={cellStyles} align="right">
@@ -143,9 +141,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
             }}
           >
             {/* {row?.allColumns[2]?.columnValue} */}
-            {formatFinancial(
-              row?.allColumns[2]?.columnValue
-            )}
+            {formatFinancial(row?.allColumns[2]?.columnValue)}
           </div>
         </TableCell>
         <TableCell sx={cellStyles} align="right">
@@ -350,7 +346,7 @@ const Nested = () => {
   const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
     axios
       .get(
-        `http://34.51.72.135:8080/api/dynamic/screens/scr_worksheet/202502?pageNumber=${
+        `http://34.51.85.243:8080/api/dynamic/screens/scr_worksheet/202502?pageNumber=${
           pageNumber + 1
         }&pageSize=${pageSize}`
       )
@@ -382,7 +378,22 @@ const Nested = () => {
   };
 
   return (
-    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+    <Box
+      p={2}
+      sx={{
+        bgcolor: "#FFFFFF",
+        borderRadius: "10px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}
+    >
+      <TableHeadingCard
+        headingOne={"MONTHLY STATEMENT OF ASSETS AND LIABILITIES"}
+        SubHeading={
+          "Article 35 of the Eastern Caribbean Central Bank Agreement 1983"
+        }
+      />
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>

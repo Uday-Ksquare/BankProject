@@ -114,9 +114,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
 
         <TableCell sx={cellStyles} align="right">
           {/* {row?.allColumns[0]?.columnValue} */}
-          {formatFinancial(
-            row?.allColumns[0]?.columnValue
-          )}
+          {formatFinancial(row?.allColumns[0]?.columnValue)}
         </TableCell>
         <TableCell sx={cellStyles} align="right">
           <div
@@ -128,9 +126,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
             }}
           >
             {/* {row?.allColumns[1]?.columnValue} */}
-            {formatFinancial(
-              row?.allColumns[1]?.columnValue
-            )}
+            {formatFinancial(row?.allColumns[1]?.columnValue)}
           </div>
         </TableCell>
         {/* <TableCell sx={cellStyles} align="right">
@@ -349,7 +345,7 @@ const SuppDBorrowings = () => {
   const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
     axios
       .get(
-        `http://34.51.72.135:8080/api/dynamic/screens/scr_supp_d_borrowings/202502?pageNumber=${
+        `http://34.51.85.243:8080/api/dynamic/screens/scr_supp_d_borrowings/202502?pageNumber=${
           pageNumber + 1
         }&pageSize=${pageSize}`
       )

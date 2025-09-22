@@ -20,6 +20,7 @@ import { formatFinancial, formatIndianNumber } from "../utils/consonants";
 import EditDrawerComponent from "./EditDrawerComponent";
 import { useSearchParams } from "react-router-dom";
 import FormTextField from "../components/FormTextField";
+import TableHeadingCard from "../components/TableHeadingCard";
 
 const cellStyles = {
   border: "1px solid #aaa",
@@ -349,7 +350,7 @@ const SettlementAccountsPage = () => {
   const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
     axios
       .get(
-        `http://34.51.72.135:8080/api/dynamic/screens/scr_supp_i_settlement_accounts%20/202502?pageNumber=${
+        `http://34.51.85.243:8080/api/dynamic/screens/scr_supp_i_settlement_accounts%20/202502?pageNumber=${
           pageNumber + 1
         }&pageSize=${pageSize}`
       )
@@ -381,7 +382,8 @@ const SettlementAccountsPage = () => {
   };
 
   return (
-    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px",display: "flex", flexDirection: "column", gap: "10px" }}>
+      <TableHeadingCard headingOne={"SETTLEMENT ACCOUNTS PAYABLE CLASSIFIED BY SECTOR OF OWNER AND TYPE"} SubHeading={"(All figures in thousands of Eastern Caribbean dollars)"}/>
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>

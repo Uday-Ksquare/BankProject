@@ -20,6 +20,7 @@ import { formatFinancial, formatIndianNumber } from "../utils/consonants";
 import EditDrawerComponent from "./EditDrawerComponent";
 import { useSearchParams } from "react-router-dom";
 import FormTextField from "../components/FormTextField";
+import TableHeadingCard from "../components/TableHeadingCard";
 
 const cellStyles = {
   border: "1px solid #aaa",
@@ -343,7 +344,7 @@ const PayablesAndReceivablesPage = () => {
   const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
     axios
       .get(
-        `http://34.51.72.135:8080/api/dynamic/screens/scr_supp_j_payables_and_receivables/202502?pageNumber=${
+        `http://34.51.85.243:8080/api/dynamic/screens/scr_supp_j_payables_and_receivables/202502?pageNumber=${
           pageNumber + 1
         }&pageSize=${pageSize}`
       )
@@ -375,7 +376,8 @@ const PayablesAndReceivablesPage = () => {
   };
 
   return (
-    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px",display: "flex", flexDirection: "column", gap: "10px" }}>
+      <TableHeadingCard headingOne={"OTHER ACCOUNTS PAYABLES AND RECEIVABLES CLASSIFIED BY SECTOR OF DEBTOR"} SubHeading={"(All figures in thousands of Eastern Caribbean dollars)"}/>
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>

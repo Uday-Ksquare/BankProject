@@ -12,7 +12,7 @@ const InvLstPage = () => {
 
   const fetchCdssList = () => {
     axios
-      .get("http://34.51.72.135:8080/api/dynamic/screens/scr_invlst/202502")
+      .get("http://34.51.85.243:8080/api/dynamic/screens/scr_invlst/202502")
       .then((response) => {
         setData(response.data?.data);
       })

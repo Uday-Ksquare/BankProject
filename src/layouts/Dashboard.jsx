@@ -35,7 +35,7 @@ export default function Layout() {
 
   const fetchScreens = () => {
     axios
-      .get("http://34.51.72.135:8080/api/dynamic/screens")
+      .get("http://34.51.85.243:8080/api/dynamic/screens")
       .then((response) => {
         setScreens(response.data?.data);
       })

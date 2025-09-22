@@ -130,7 +130,7 @@ const DocumentUploaderContainer = () => {
       });
 
       const response = await axios.post(
-        "http://34.51.72.135:8080/api/import/files",
+        "http://34.51.85.243:8080/api/import/files",
         formData,
         {
           headers: {

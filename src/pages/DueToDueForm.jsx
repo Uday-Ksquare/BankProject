@@ -155,7 +155,7 @@ const DueToDueForm = () => {
   const fetchCdssList = () => {
     axios
       .get(
-        "http://34.51.72.135:8080/api/dynamic/screens/scr_supp_c_due_to_and_due_from/202502"
+        "http://34.51.85.243:8080/api/dynamic/screens/scr_supp_c_due_to_and_due_from/202502"
       )
       .then((response) => {
         setWorksheet(response.data?.data || []);
