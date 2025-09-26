@@ -24,11 +24,14 @@ import XLS from "../assets/XLS.svg";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
+import GlAccessDropDown from "../components/GlAccessDropDown";
+import { getCurrentYearMonth } from "../utils/consonants";
 
 const drawerWidth = 270;
 
 export default function Layout() {
   const theme = useTheme();
+  const [period, setPeriod] = useState(getCurrentYearMonth());
   const isMobile = useMediaQuery(theme.breakpoints.down("md")); // md breakpoint
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [screens, setScreens] = useState([]);
@@ -104,9 +107,8 @@ export default function Layout() {
               }}
               disablePadding
             >
-              
               <ListItemButton
-                selected={window.location.pathname === `/${screenId}` } // highlights on active
+                selected={window.location.pathname === `/${screenId}`} // highlights on active
               >
                 <ListItemIcon sx={{ minWidth: "30px" }}>
                   <img style={{ height: 18 }} src={XLS} alt="" />
@@ -176,9 +178,9 @@ export default function Layout() {
             />
 
             <Box sx={{ flexGrow: 1 }} />
-
-            {/* Show Menu Icon only on Mobile */}
-            {
+            <Box sx={{ display: "flex", alignItems: "center",color: "#FFFFFF",gap: 2 }}>
+              <GlAccessDropDown textColorIsWhite={true} period={period} setPeriod={setPeriod} />
+              {
               <IconButton
                 color="inherit"
                 edge="end"
@@ -187,6 +189,10 @@ export default function Layout() {
                 <MenuIcon />
               </IconButton>
             }
+            </Box>
+
+            {/* Show Menu Icon only on Mobile */}
+            
 
             {/* Avatar (desktop only) */}
             {/* {!isMobile && (
