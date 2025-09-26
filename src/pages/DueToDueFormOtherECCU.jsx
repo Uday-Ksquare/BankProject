@@ -61,7 +61,7 @@ const getExtraIndent = (desc) => {
   return 2; // fallback
 };
 
-const updatedData = (data, editingRow, row) =>
+const updatedData = (data, editingRow,row) =>
   data.map((item) => ({
     ...item,
     detailId: editingRow.detailId,
@@ -76,8 +76,8 @@ const ExpandableRow = ({ row, level = 0 }) => {
   const [openEdit, setOpenEdit] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
   const [editFields, setEditFields] = useState(editingRow?.allColumns || []);
-  console.log(editingRow);
-  // console.log("row", row);
+
+  console.log("row", editingRow);
   useEffect(() => {
     setEditFields(editingRow?.allColumns || []);
   }, [editingRow]);
@@ -173,7 +173,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
         cancelText={"Cancel"}
         setOpenEdit={setOpenEdit}
         onSubmit={() => {
-          console.log(updatedData(editFields, editingRow, row));
+          console.log(updatedData(editFields, editingRow,row));
         }}
       >
         <Box sx={{ display: "flex", gap: 2, flexDirection: "column", p: 2 }}>
@@ -334,7 +334,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
   );
 };
 
-const DueToDueForm = () => {
+const DueToDueFormOtherECCU = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -348,7 +348,7 @@ const DueToDueForm = () => {
   const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
     axios
       .get(
-        `http://34.51.85.243:8080/api/dynamic/screens/scr_supp_c_due_to_and_due_from/202502?pageNumber=${
+        `http://34.51.85.243:8080/api/dynamic/screens/scr_supp_c_due_to_and_due_from_other_eccu/202502?pageNumber=${
           pageNumber + 1
         }&pageSize=${pageSize}`
       )
@@ -430,4 +430,4 @@ const DueToDueForm = () => {
   );
 };
 
-export default DueToDueForm;
+export default DueToDueFormOtherECCU;

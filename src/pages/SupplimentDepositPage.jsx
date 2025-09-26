@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import axios from "axios";
-import { formatFinancial, formatIndianNumber } from "../utils/consonants";
+import { formatFinancial } from "../utils/consonants";
 import EditDrawerComponent from "./EditDrawerComponent";
 import { useSearchParams } from "react-router-dom";
 import FormTextField from "../components/FormTextField";
@@ -61,13 +61,13 @@ const getExtraIndent = (desc) => {
   return 2; // fallback
 };
 
-const columnWidths = {
-  description: "40%", // wider for text
-  codeValue: "15%",
-  previous: "15%",
-  current: "15%",
-  variance: "15%",
-};
+const updatedData = (data, editingRow) =>
+  data.map((item) => ({
+    ...item,
+    detailId: editingRow.detailId,
+    glPeriod:"202502",
+    conceptId: editingRow.conceptId,
+  }));
 
 // 🔑 Recursive Row Component
 const ExpandableRow = ({ row, level = 0 }) => {
@@ -76,7 +76,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
   const [openEdit, setOpenEdit] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
   const [editFields, setEditFields] = useState(editingRow?.allColumns || []);
-
+  // console.log(editingRow);
   useEffect(() => {
     setEditFields(editingRow?.allColumns || []);
   }, [editingRow]);
@@ -114,9 +114,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
 
         <TableCell sx={cellStyles} align="right">
           {/* {row?.allColumns[0]?.columnValue} */}
-          {formatFinancial(
-            row?.allColumns[0]?.columnValue
-          )}
+          {formatFinancial(row?.allColumns[0]?.columnValue)}
         </TableCell>
         <TableCell sx={cellStyles} align="right">
           <div
@@ -128,9 +126,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
             }}
           >
             {/* {row?.allColumns[1]?.columnValue} */}
-            {formatFinancial(
-              row?.allColumns[1]?.columnValue
-            )}
+            {formatFinancial(row?.allColumns[1]?.columnValue)}
           </div>
         </TableCell>
         <TableCell sx={cellStyles} align="right">
@@ -142,9 +138,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
               borderRadius: "4px",
             }}
           >
-            {formatFinancial(
-              row?.allColumns[2]?.columnValue
-            )}
+            {formatFinancial(row?.allColumns[2]?.columnValue)}
           </div>
         </TableCell>
         <TableCell sx={cellStyles} align="right">
@@ -177,6 +171,9 @@ const ExpandableRow = ({ row, level = 0 }) => {
         deleteText={"Delete"}
         cancelText={"Cancel"}
         setOpenEdit={setOpenEdit}
+        onSubmit ={()=>{
+          console.log(updatedData(editFields, editingRow));
+        }}
       >
         <Box sx={{ display: "flex", gap: 2, flexDirection: "column", p: 2 }}>
           {editFields.map((field, index) => (
@@ -320,7 +317,15 @@ const ExpandableRow = ({ row, level = 0 }) => {
                             borderRadius: "4px",
                           }}
                         >
-                          <Button size="small">Edit</Button>
+                          <Button
+                            onClick={() => {
+                              setOpenEdit(true);
+                              setEditingRow(child);
+                            }}
+                            size="small"
+                          >
+                            Edit
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>

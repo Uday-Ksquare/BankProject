@@ -20,7 +20,7 @@ const EditDrawerComponent = ({
   onSubmit, // ✅ allow passing a submit callback
 }) => {
 
-  console.log(row);
+  // console.log(row);
   
   const onClose = () => {
     setOpenEdit(false);
@@ -100,7 +100,8 @@ const EditDrawerComponent = ({
               bgcolor: submitColor,
               "&:hover": { bgcolor: "#1d365c" }, // darker shade
             }}
-            onClick={() => onSubmit?.(row)} // pass row back
+            // onClick={() => onSubmit?.(row)} // pass row back
+            onClick={onSubmit}
           >
             Submit
           </Button>

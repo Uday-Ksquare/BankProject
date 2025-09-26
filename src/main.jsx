@@ -36,6 +36,9 @@ import TradeCreditAndAdvanceTwoPage from "./pages/TradeCreditAndAdvanceTwoPage.j
 import FinancialDerivativesTwoPage from "./pages/FinancialDerivativesTwoPage.jsx";
 import OverDraftPage from "./pages/OverDraftPage.jsx";
 import AccruedPage from "./pages/AccruedPage.jsx";
+import DueToDueFormOtherECCU from "./pages/DueToDueFormOtherECCU.jsx";
+import DueToDueFormOtherNonCaricomPage from "./pages/DueToDueFormOtherNonCaricomPage.jsx";
+import DueToDueFormOtherNonEccuPage from "./pages/DueToDueFormOtherNonEccuPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -98,6 +101,18 @@ const router = createBrowserRouter([
             element: <DueToDueForm />,
           },
           {
+            path:"/scr_supp_c_due_to_and_due_from_other_non_caricom",
+            element:<DueToDueFormOtherNonCaricomPage/>
+          },
+          {
+            path:"/scr_supp_c_due_to_and_due_from_other_non_eccu",
+            element:<DueToDueFormOtherNonEccuPage/>
+          },
+          {
+            path: "/scr_supp_c_due_to_and_due_from_other_eccu",
+            element: <DueToDueFormOtherECCU />,
+          },
+          {
             path: "/scr_supp_d_borrowings",
             element: <SuppDBorrowings />,
           },
@@ -114,24 +129,24 @@ const router = createBrowserRouter([
             element: <TradeCreditAndAdvancePage />,
           },
           {
-            path:"/scr_supp_f2_trade_credit_and_advance",
-            element:<TradeCreditAndAdvanceTwoPage/>
+            path: "/scr_supp_f2_trade_credit_and_advance",
+            element: <TradeCreditAndAdvanceTwoPage />,
           },
           {
             path: "/scr_supp_h_investment_and_debenture",
             element: <InvestmentAndDebenture />,
           },
           {
-            path:"/scr_supp_h2_investment_and_debenture",
-            element:<InvestmentAndDebunturetwoPage/>
+            path: "/scr_supp_h2_investment_and_debenture",
+            element: <InvestmentAndDebunturetwoPage />,
           },
           {
             path: "/scr_supp_i_settlement_accounts ",
             element: <SettlementAccountsPage />,
           },
           {
-            path:"/scr_supp_i2_settlement_accounts ",
-            element:<SettlementsAccountsTwoPage/>
+            path: "/scr_supp_i2_settlement_accounts ",
+            element: <SettlementsAccountsTwoPage />,
           },
           {
             path: "/scr_supp_j_payables_and_receivables",
@@ -158,13 +173,13 @@ const router = createBrowserRouter([
             element: <PROneImportPage />,
           },
           {
-            path:"/scr_overdraft",
-            element:<OverDraftPage/>
+            path: "/scr_overdraft",
+            element: <OverDraftPage />,
           },
           {
-            path:"/scr_accrued_interest",
-            element:<AccruedPage/>
-          }
+            path: "/scr_accrued_interest",
+            element: <AccruedPage />,
+          },
         ],
       },
 
