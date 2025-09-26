@@ -13,6 +13,7 @@ import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
+import TableHeadingCard from "../components/TableHeadingCard";
 
 const SupplimentDepositPage = () => {
   const [worksheet, setWorksheet] = useState({});
@@ -77,7 +78,20 @@ const SupplimentDepositPage = () => {
   };
 
   return (
-    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+    <Box
+      p={2}
+      sx={{
+        bgcolor: "#FFFFFF",
+        borderRadius: "10px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}
+    >
+      <TableHeadingCard
+        headingOne={"Supplement A1 Deposits"}
+        SubHeading={"DEPOSITS CLASSIFIED BY SECTOR OF OWNER AND TYPE"}
+      />
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>

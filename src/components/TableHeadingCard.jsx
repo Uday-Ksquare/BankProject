@@ -1,7 +1,7 @@
 import { Paper, Typography } from "@mui/material";
 import React from "react";
 
-const TableHeadingCard = ({ headingOne, headingTwo ,SubHeading}) => {
+const TableHeadingCard = ({ headingOne, SubHeading }) => {
   return (
     <Paper
       sx={{
@@ -11,11 +11,10 @@ const TableHeadingCard = ({ headingOne, headingTwo ,SubHeading}) => {
         textAlign: "center",
       }}
     >
-      <Typography variant="h6">
-        {headingOne}
-      </Typography>
+      <Typography variant="h6">{headingOne}</Typography>
+      <Typography variant="body2">{SubHeading}</Typography>
       <Typography variant="body2">
-        {SubHeading}
+        (All figures in thousands of Eastern Caribbean dollars)
       </Typography>
     </Paper>
   );
