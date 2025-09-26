@@ -13,7 +13,7 @@ const PROneImportPage = () => {
 
   // ✅ fetch API when params change
   useEffect(() => {
-    getScreensData("scr_pr01import", "202502", pageNumber, pageSize).then(
+    getScreensData("/scr_pr01import", "202502", pageNumber, pageSize).then(
       (res) =>
         setData({
           screens: res.screens || [],

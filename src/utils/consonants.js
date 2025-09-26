@@ -18,3 +18,22 @@ export const formatFinancial = (val) => {
     ? `(${formatIndianNumber(Math.abs(val))})`
     : formatIndianNumber(val);
 };
+
+
+export const cellStyles = {
+  border: "1px solid #aaa",
+  padding: "6px",
+  fontSize: "14px",
+};
+
+export const headerCellStyles = {
+  ...cellStyles,
+  fontWeight: "bold",
+  backgroundColor: "#dce6f1",
+};
+
+export const groupHeaderStyles = {
+  ...cellStyles,
+  fontWeight: "bold",
+  backgroundColor: "#f2f2f2",
+};

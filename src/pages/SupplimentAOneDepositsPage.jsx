@@ -14,7 +14,7 @@ import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
 
-const InvestmentAndDebenture = () => {
+const SupplimentAOneDepositsPage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -41,7 +41,7 @@ const InvestmentAndDebenture = () => {
   // };
   useEffect(() => {
     getScreensData(
-      "/scr_supp_h_investment_and_debenture",
+      "/scr_supp_a1_deposits",
       "202502",
       page + 1,
       rowsPerPage
@@ -90,14 +90,28 @@ const InvestmentAndDebenture = () => {
                 style={{ width: "10%" }}
                 align="right"
               >
-                Current Period
+                FC Demand
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                FOREIGN CURRENCY
+                FC Savings
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                FC Fixed Time Non-Negotiable CDs
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                FC Negotiable Certificate of Deposits
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -113,6 +127,16 @@ const InvestmentAndDebenture = () => {
               <ExpandableRowTable
                 width={"10%"}
                 emptyAllColumns={[
+                  {
+                    columnName: "ECCU Current Period",
+                    columnValue: 0.0,
+                    columnPosition: 1,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
+                  },
                   {
                     columnName: "ECCU Current Period",
                     columnValue: 0.0,
@@ -145,4 +169,4 @@ const InvestmentAndDebenture = () => {
   );
 };
 
-export default InvestmentAndDebenture;
+export default SupplimentAOneDepositsPage;

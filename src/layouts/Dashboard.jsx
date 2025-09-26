@@ -104,8 +104,9 @@ export default function Layout() {
               }}
               disablePadding
             >
+              
               <ListItemButton
-                selected={window.location.pathname.includes(screenId)} // highlights on active
+                selected={window.location.pathname === `/${screenId}` } // highlights on active
               >
                 <ListItemIcon sx={{ minWidth: "30px" }}>
                   <img style={{ height: 18 }} src={XLS} alt="" />
@@ -214,14 +215,14 @@ export default function Layout() {
             p: 3,
           }}
         >
-          <Typography
+          {/* <Typography
             variant="h6"
             align="start"
             sx={{ color: "#1E326B", fontWeight: 600, fontSize: "18px" }}
             gutterBottom
           >
             ECCB PR01 Template Viewer
-          </Typography>
+          </Typography> */}
           <Box sx={{ mt: 2, flex: 1 }}>
             <Outlet />
           </Box>

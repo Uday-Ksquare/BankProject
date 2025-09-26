@@ -39,6 +39,8 @@ import AccruedPage from "./pages/AccruedPage.jsx";
 import DueToDueFormOtherECCU from "./pages/DueToDueFormOtherECCU.jsx";
 import DueToDueFormOtherNonCaricomPage from "./pages/DueToDueFormOtherNonCaricomPage.jsx";
 import DueToDueFormOtherNonEccuPage from "./pages/DueToDueFormOtherNonEccuPage.jsx";
+import SupplimentAOneDepositsPage from "./pages/SupplimentAOneDepositsPage.jsx";
+import SuppGLoansForeignCurrencyPage from "./pages/SuppGLoansForeignCurrencyPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -180,6 +182,14 @@ const router = createBrowserRouter([
             path: "/scr_accrued_interest",
             element: <AccruedPage />,
           },
+          {
+            path:"/scr_supp_a1_deposits",
+            element:<SupplimentAOneDepositsPage/>
+          },
+          {
+            path:"/scr_supp_g_loans_foreign_currency",
+            element:<SuppGLoansForeignCurrencyPage/>
+          }
         ],
       },
 

@@ -14,7 +14,7 @@ import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
 
-const InvestmentAndDebenture = () => {
+const SuppGLoansForeignCurrencyPage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -41,7 +41,7 @@ const InvestmentAndDebenture = () => {
   // };
   useEffect(() => {
     getScreensData(
-      "/scr_supp_h_investment_and_debenture",
+      "/scr_supp_g_loans_foreign_currency",
       "202502",
       page + 1,
       rowsPerPage
@@ -90,14 +90,28 @@ const InvestmentAndDebenture = () => {
                 style={{ width: "10%" }}
                 align="right"
               >
-                Current Period
+                Loans Current Period
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                FOREIGN CURRENCY
+                Loans Repurchase Agreements
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Loans Credit Cards
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                of which Accrued Interest
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -117,6 +131,16 @@ const InvestmentAndDebenture = () => {
                     columnName: "ECCU Current Period",
                     columnValue: 0.0,
                     columnPosition: 1,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
                   },
                   {
                     columnName: "ECCU Foreign Currency",
@@ -145,4 +169,4 @@ const InvestmentAndDebenture = () => {
   );
 };
 
-export default InvestmentAndDebenture;
+export default SuppGLoansForeignCurrencyPage;

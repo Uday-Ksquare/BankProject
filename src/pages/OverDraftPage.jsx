@@ -13,7 +13,7 @@ const OverDraftPage = () => {
 
   // ✅ fetch API when params change
   useEffect(() => {
-    getScreensData("scr_overdraft", "202502", pageNumber, pageSize).then(
+    getScreensData("/scr_overdraft", "202502", pageNumber, pageSize).then(
       (res) =>
         setData({
           screens: res.screens || [],
