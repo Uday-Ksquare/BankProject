@@ -106,7 +106,7 @@ const ExpandableRowTable = ({
           sx={{
             ...(level === 0 ? groupHeaderStyles : cellStyles),
             pl: 2 + level * 4 + getExtraIndent(row.descripcion),
-            display: "flex",
+            // display: "flex",
             gap: 1,
           }}
         >
