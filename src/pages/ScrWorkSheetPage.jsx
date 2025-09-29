@@ -97,7 +97,14 @@ const ScrWorkSheetPage = () => {
                 style={{ width: "10%" }}
                 align="right"
               >
-                FOREIGN CURRENCY
+                Previous Period
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Variance
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -117,6 +124,11 @@ const ScrWorkSheetPage = () => {
                     columnName: "ECCU Current Period",
                     columnValue: 0.0,
                     columnPosition: 1,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
                   },
                   {
                     columnName: "ECCU Foreign Currency",
