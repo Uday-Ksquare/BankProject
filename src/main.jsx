@@ -41,6 +41,7 @@ import DueToDueFormOtherNonEccuPage from "./pages/DueToDueFormOtherNonEccuPage.j
 import SupplimentAOneDepositsPage from "./pages/SupplimentAOneDepositsPage.jsx";
 import SuppGLoansForeignCurrencyPage from "./pages/SuppGLoansForeignCurrencyPage.jsx";
 import ScrWorkSheetPage from "./pages/ScrWorkSheetPage.jsx";
+import PrOnePage from "./pages/PrOnePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
           {
             path: "/scr_savlst",
             element: <SavLstPage />,
+          },
+          {
+            path:"/scr_pr01",
+            element:<PrOnePage/>
           },
           {
             path: "/scr_worksheet",
