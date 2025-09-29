@@ -13,7 +13,6 @@ import FinDepPage from "./pages/FinDepPage.jsx";
 import FinLnsPage from "./pages/FinLnsPage.jsx";
 import InvLstPage from "./pages/InvLstPage.jsx";
 import SavLstPage from "./pages/SavLstPage.jsx";
-import Example from "./pages/Nested.jsx";
 import SupplimentDepositPage from "./pages/SupplimentDepositPage.jsx";
 import PrMapPage from "./pages/PrMapPage.jsx";
 import SuppGLoansPage from "./pages/SuppGLoansPage.jsx";
@@ -41,6 +40,7 @@ import DueToDueFormOtherNonCaricomPage from "./pages/DueToDueFormOtherNonCaricom
 import DueToDueFormOtherNonEccuPage from "./pages/DueToDueFormOtherNonEccuPage.jsx";
 import SupplimentAOneDepositsPage from "./pages/SupplimentAOneDepositsPage.jsx";
 import SuppGLoansForeignCurrencyPage from "./pages/SuppGLoansForeignCurrencyPage.jsx";
+import ScrWorkSheetPage from "./pages/ScrWorkSheetPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -80,7 +80,7 @@ const router = createBrowserRouter([
           },
           {
             path: "/scr_worksheet",
-            element: <Example />,
+            element: <ScrWorkSheetPage />,
           },
           {
             path: "/scr_supp_a_deposits",

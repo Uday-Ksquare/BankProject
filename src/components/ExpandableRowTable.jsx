@@ -57,6 +57,7 @@ const getExtraIndent = (desc) => {
 };
 
 const ExpandableRowTable = ({
+  descriptionWidth="50%",
   row,
   level = 0,
   emptyAllColumns,
@@ -170,16 +171,16 @@ const ExpandableRowTable = ({
       {/* Children Rows */}
       {hasChildren && (
         <TableRow>
-          <TableCell colSpan={6} sx={{ padding: 0 }}>
+          <TableCell colSpan={10} sx={{ padding: 0 }}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell width={"50%"} sx={headerCellStyles}>
+                    <TableCell width={descriptionWidth} sx={headerCellStyles}>
                       Description
                     </TableCell>
                     {childColumns.map((col, idx) => (
-                      <TableCell key={idx} sx={headerCellStyles} align="right">
+                      <TableCell width={width} key={idx} sx={headerCellStyles} align="right">
                         {col.columnName}
                       </TableCell>
                     ))}

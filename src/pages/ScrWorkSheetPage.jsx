@@ -14,7 +14,7 @@ import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
 
-const SettlementAccountsPage = () => {
+const ScrWorkSheetPage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -41,7 +41,7 @@ const SettlementAccountsPage = () => {
   // };
   useEffect(() => {
     getScreensData(
-      "/scr_supp_i_settlement_accounts%20",
+      "/scr_worksheet",
       "202502",
       page + 1,
       rowsPerPage
@@ -145,4 +145,4 @@ const SettlementAccountsPage = () => {
   );
 };
 
-export default SettlementAccountsPage;
+export default ScrWorkSheetPage;
