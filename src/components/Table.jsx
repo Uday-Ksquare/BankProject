@@ -1,8 +1,18 @@
-import { Box } from "@mui/material";
-import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
+import { Box, Button } from "@mui/material";
+import axios from "axios";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+} from "material-react-table";
 import { useMemo } from "react";
 
-const Table = ({ tableData, totalItems, onPageChange, pageNumber, pageSize }) => {
+const Table = ({
+  tableData,
+  totalItems,
+  onPageChange,
+  pageNumber,
+  pageSize,
+}) => {
   const cleanData = useMemo(() => {
     return tableData.map((row) =>
       Object.fromEntries(
@@ -30,6 +40,30 @@ const Table = ({ tableData, totalItems, onPageChange, pageNumber, pageSize }) =>
     state: {
       pagination: { pageIndex: pageNumber - 1, pageSize },
     },
+    renderTopToolbarCustomActions: () => (
+      <Box>
+        <Button
+          onClick={() => {
+            axios
+              .get(
+                "http://34.51.85.243:8080/api/import/generateCsv/202502/scr_pr01import"
+              )
+              .then((res) => {
+                const url = window.URL.createObjectURL(new Blob([res.data]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", "Pr01.csv");
+                document.body.appendChild(link);
+                link.click();
+              });
+          }}
+          size="small"
+          variant="contained"
+        >
+          Download CSV
+        </Button>
+      </Box>
+    ),
     // ✅ FIX: MRT passes an updater (object), not separate args
     onPaginationChange: (updater) => {
       const { pageIndex, pageSize: newSize } =
