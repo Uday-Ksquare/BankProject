@@ -34,6 +34,7 @@ const PROneImportPage = () => {
   return (
     <div>
       <Table
+        isPro1 ={true}
         tableData={data.screens}
         totalItems={data.totalItems}
         onPageChange={handlePageChange}

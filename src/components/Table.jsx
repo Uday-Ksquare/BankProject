@@ -12,6 +12,7 @@ const Table = ({
   onPageChange,
   pageNumber,
   pageSize,
+  isPro1 = false
 }) => {
   const cleanData = useMemo(() => {
     return tableData.map((row) =>
@@ -40,7 +41,8 @@ const Table = ({
     state: {
       pagination: { pageIndex: pageNumber - 1, pageSize },
     },
-    renderTopToolbarCustomActions: () => (
+    ...(isPro1 && {
+      renderTopToolbarCustomActions: () => (
       <Box>
         <Button
           onClick={() => {
@@ -64,6 +66,7 @@ const Table = ({
         </Button>
       </Box>
     ),
+    }),
     // ✅ FIX: MRT passes an updater (object), not separate args
     onPaginationChange: (updater) => {
       const { pageIndex, pageSize: newSize } =
