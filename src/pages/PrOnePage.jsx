@@ -25,20 +25,7 @@ const PrOnePage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
 
-  // const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
-  //   axios
-  //     .get(
-  //       `http://34.51.85.243:8080/api/dynamic/screens/scr_supp_c_due_to_and_due_from_other_eccu/202502?pageNumber=${
-  //         pageNumber + 1
-  //       }&pageSize=${pageSize}`
-  //     )
-  //     .then((response) => {
-  //       setWorksheet(response?.data || {});
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
+
   useEffect(() => {
     getScreensData(
       "/scr_pr01",

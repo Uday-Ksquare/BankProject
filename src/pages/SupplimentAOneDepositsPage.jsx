@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -14,10 +14,12 @@ import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
 import TableHeadingCard from "../components/TableHeadingCard";
+import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 
 const SupplimentAOneDepositsPage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
+  const { glPeriod } = useContext(GlPeriodContext);
 
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
@@ -26,24 +28,10 @@ const SupplimentAOneDepositsPage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
 
-  // const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
-  //   axios
-  //     .get(
-  //       `http://34.51.85.243:8080/api/dynamic/screens/scr_supp_c_due_to_and_due_from_other_eccu/202502?pageNumber=${
-  //         pageNumber + 1
-  //       }&pageSize=${pageSize}`
-  //     )
-  //     .then((response) => {
-  //       setWorksheet(response?.data || {});
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
   useEffect(() => {
     getScreensData(
       "/scr_supp_a1_deposits",
-      "202502",
+      glPeriod,
       page + 1,
       rowsPerPage
     ).then((res) => {
@@ -55,9 +43,10 @@ const SupplimentAOneDepositsPage = () => {
       setSearchParams({
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
+        period: glPeriod,
       });
     });
-  }, [page, rowsPerPage, setSearchParams]);
+  }, [page, rowsPerPage, setSearchParams, glPeriod]);
   // useEffect(() => {
   //   fetchCdssList(page, rowsPerPage);
 

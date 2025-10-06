@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import axios from "axios";
+import { getHeadersService } from "../services/getHeadersService";
+import TableHeadingCard from "../components/TableHeadingCard";
 
 const cellStyles = {
   border: "1px solid #aaa",
@@ -151,6 +153,7 @@ const ExpandableRow = ({ row, level = 0 }) => {
 
 const CurrencyPositionPage = () => {
   const [worksheet, setWorksheet] = useState([]);
+  const [headers, setHeaders] = useState([]);
 
   const fetchCdssList = () => {
     axios
@@ -165,12 +168,20 @@ const CurrencyPositionPage = () => {
       });
   };
 
+    useEffect(() => {
+      getHeadersService("/scr_supp_m_currency_positions").then((res) => {
+        setHeaders(res || []);
+      });
+    }, []);
+
   useEffect(() => {
     fetchCdssList();
   }, []);
 
   return (
     <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+      <TableHeadingCard headingOne={headers[0]?.header_text}
+        SubHeading={headers[1]?.header_text} />
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>

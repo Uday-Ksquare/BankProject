@@ -42,10 +42,16 @@ import SupplimentAOneDepositsPage from "./pages/SupplimentAOneDepositsPage.jsx";
 import SuppGLoansForeignCurrencyPage from "./pages/SuppGLoansForeignCurrencyPage.jsx";
 import ScrWorkSheetPage from "./pages/ScrWorkSheetPage.jsx";
 import PrOnePage from "./pages/PrOnePage.jsx";
+import SupplementMCurrencyNetPositions from "./pages/SupplementMCurrencyNetPositions.jsx";
+import { GlPeriodContextProvider } from "./Contexts/GlPeriodContextProvider.jsx";
 
 const router = createBrowserRouter([
   {
-    element: <App />,
+    element: (
+      <GlPeriodContextProvider>
+        <App />
+      </GlPeriodContextProvider>
+    ),
     children: [
       {
         path: "/",
@@ -80,8 +86,8 @@ const router = createBrowserRouter([
             element: <SavLstPage />,
           },
           {
-            path:"/scr_pr01",
-            element:<PrOnePage/>
+            path: "/scr_pr01",
+            element: <PrOnePage />,
           },
           {
             path: "/scr_worksheet",
@@ -108,12 +114,12 @@ const router = createBrowserRouter([
             element: <DueToDueForm />,
           },
           {
-            path:"/scr_supp_c_due_to_and_due_from_other_non_caricom",
-            element:<DueToDueFormOtherNonCaricomPage/>
+            path: "/scr_supp_c_due_to_and_due_from_other_non_caricom",
+            element: <DueToDueFormOtherNonCaricomPage />,
           },
           {
-            path:"/scr_supp_c_due_to_and_due_from_other_non_eccu",
-            element:<DueToDueFormOtherNonEccuPage/>
+            path: "/scr_supp_c_due_to_and_due_from_other_non_eccu",
+            element: <DueToDueFormOtherNonEccuPage />,
           },
           {
             path: "/scr_supp_c_due_to_and_due_from_other_eccu",
@@ -160,6 +166,10 @@ const router = createBrowserRouter([
             element: <PayablesAndReceivablesPage />,
           },
           {
+            path: "/scr_supp_m_currency_net_positions",
+            element: <SupplementMCurrencyNetPositions />,
+          },
+          {
             path: "/scr_supp_K1_due_to_banks",
             element: <DueToBankspage />,
           },
@@ -188,13 +198,13 @@ const router = createBrowserRouter([
             element: <AccruedPage />,
           },
           {
-            path:"/scr_supp_a1_deposits",
-            element:<SupplimentAOneDepositsPage/>
+            path: "/scr_supp_a1_deposits",
+            element: <SupplimentAOneDepositsPage />,
           },
           {
-            path:"/scr_supp_g_loans_foreign_currency",
-            element:<SuppGLoansForeignCurrencyPage/>
-          }
+            path: "/scr_supp_g_loans_foreign_currency",
+            element: <SuppGLoansForeignCurrencyPage />,
+          },
         ],
       },
 

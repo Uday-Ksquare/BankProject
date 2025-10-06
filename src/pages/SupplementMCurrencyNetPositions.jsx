@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -13,9 +13,8 @@ import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
-import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 
-const InvestmentAndDebenture = () => {
+const SupplementMCurrencyNetPositions = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -25,11 +24,12 @@ const InvestmentAndDebenture = () => {
 
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
-  const { glPeriod } = useContext(GlPeriodContext);
+
+
   useEffect(() => {
     getScreensData(
-      "/scr_supp_h_investment_and_debenture",
-      glPeriod,
+      "/scr_supp_m_currency_net_positions",
+      "202502",
       page + 1,
       rowsPerPage
     ).then((res) => {
@@ -41,10 +41,9 @@ const InvestmentAndDebenture = () => {
       setSearchParams({
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
-        period: glPeriod,
       });
     });
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+  }, [page, rowsPerPage, setSearchParams]);
   // useEffect(() => {
   //   fetchCdssList(page, rowsPerPage);
 
@@ -70,7 +69,7 @@ const InvestmentAndDebenture = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={{ width: "50%" }} sx={headerCellStyles}>
+              <TableCell style={{ width: "10%" }} sx={headerCellStyles}>
                 Description
               </TableCell>
               <TableCell
@@ -78,14 +77,56 @@ const InvestmentAndDebenture = () => {
                 style={{ width: "10%" }}
                 align="right"
               >
-                Current Period
+                Current Account/ Call Account
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                FOREIGN CURRENCY
+                Fixed/Time Deposits/Non-negotiable CDs
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Negotiable Certificates of Deposits
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Borrowings
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Repurchase Agreements
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Other
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Balance outstanding
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Collateral Value (EC Equiv)
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -99,8 +140,39 @@ const InvestmentAndDebenture = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
+              descriptionWidth={"10%"}
                 width={"10%"}
                 emptyAllColumns={[
+                  {
+                    columnName: "ECCU Current Period",
+                    columnValue: 0.0,
+                    columnPosition: 1,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
+                  },
+                  {
+                    columnName: "ECCU Current Period",
+                    columnValue: 0.0,
+                    columnPosition: 1,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
+                  },
+                  {
+                    columnName: "ECCU Current Period",
+                    columnValue: 0.0,
+                    columnPosition: 1,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
+                  },
                   {
                     columnName: "ECCU Current Period",
                     columnValue: 0.0,
@@ -133,4 +205,4 @@ const InvestmentAndDebenture = () => {
   );
 };
 
-export default InvestmentAndDebenture;
+export default SupplementMCurrencyNetPositions;

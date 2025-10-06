@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -13,10 +13,14 @@ import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
+import TableHeadingCard from "../components/TableHeadingCard";
+import { getHeadersService } from "../services/getHeadersService";
+import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 
 const InterestRatesPage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
+  const [headers, setHeaders] = useState([]);
 
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
@@ -24,25 +28,17 @@ const InterestRatesPage = () => {
 
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
+  const { glPeriod } = useContext(GlPeriodContext);
 
-  // const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
-  //   axios
-  //     .get(
-  //       `http://34.51.85.243:8080/api/dynamic/screens/scr_supp_c_due_to_and_due_from_other_eccu/202502?pageNumber=${
-  //         pageNumber + 1
-  //       }&pageSize=${pageSize}`
-  //     )
-  //     .then((response) => {
-  //       setWorksheet(response?.data || {});
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
+  useEffect(() => {
+    getHeadersService("/scr_scr_supp_l_interest_ratesworksheet").then((res) => {
+      setHeaders(res || []);
+    });
+  }, []);
   useEffect(() => {
     getScreensData(
       "/scr_supp_l_interest_rates",
-      "202502",
+      glPeriod,
       page + 1,
       rowsPerPage
     ).then((res) => {
@@ -54,18 +50,10 @@ const InterestRatesPage = () => {
       setSearchParams({
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
+        period: glPeriod,
       });
     });
-  }, [page, rowsPerPage, setSearchParams]);
-  // useEffect(() => {
-  //   fetchCdssList(page, rowsPerPage);
-
-  //   // update URL query string whenever page/size changes
-  //   setSearchParams({
-  //     page: (page + 1).toString(),
-  //     pageSize: rowsPerPage.toString(),
-  //   });
-  // }, [page, rowsPerPage, setSearchParams]);
+  }, [page, rowsPerPage, setSearchParams, glPeriod]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -77,7 +65,20 @@ const InterestRatesPage = () => {
   };
 
   return (
-    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+    <Box
+      p={2}
+      sx={{
+        bgcolor: "#FFFFFF",
+        borderRadius: "10px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}
+    >
+      <TableHeadingCard
+        headingOne={headers[0]?.header_text}
+        SubHeading={headers[1]?.header_text}
+      />
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>

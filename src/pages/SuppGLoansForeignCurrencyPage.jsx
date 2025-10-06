@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -13,6 +13,7 @@ import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
+import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 
 const SuppGLoansForeignCurrencyPage = () => {
   const [worksheet, setWorksheet] = useState({});
@@ -24,25 +25,11 @@ const SuppGLoansForeignCurrencyPage = () => {
 
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
-
-  // const fetchCdssList = (pageNumber = 0, pageSize = 10) => {
-  //   axios
-  //     .get(
-  //       `http://34.51.85.243:8080/api/dynamic/screens/scr_supp_c_due_to_and_due_from_other_eccu/202502?pageNumber=${
-  //         pageNumber + 1
-  //       }&pageSize=${pageSize}`
-  //     )
-  //     .then((response) => {
-  //       setWorksheet(response?.data || {});
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
+  const { glPeriod } = useContext(GlPeriodContext);
   useEffect(() => {
     getScreensData(
       "/scr_supp_g_loans_foreign_currency",
-      "202502",
+      glPeriod,
       page + 1,
       rowsPerPage
     ).then((res) => {
@@ -54,18 +41,10 @@ const SuppGLoansForeignCurrencyPage = () => {
       setSearchParams({
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
+        period: glPeriod,
       });
     });
-  }, [page, rowsPerPage, setSearchParams]);
-  // useEffect(() => {
-  //   fetchCdssList(page, rowsPerPage);
-
-  //   // update URL query string whenever page/size changes
-  //   setSearchParams({
-  //     page: (page + 1).toString(),
-  //     pageSize: rowsPerPage.toString(),
-  //   });
-  // }, [page, rowsPerPage, setSearchParams]);
+  }, [page, rowsPerPage, setSearchParams, glPeriod]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

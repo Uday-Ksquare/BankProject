@@ -1,8 +1,10 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 
-const GlAccessDropDown = ({ period, setPeriod, textColorIsWhite = false }) => {
+const GlAccessDropDown = ({ textColorIsWhite = false }) => {
   const [periods, setPeriods] = useState([]);
+  const { glPeriod: period, setGlPeriod } = useContext(GlPeriodContext);
 
   const fetchGlPeriods = async () => {
     try {
@@ -18,12 +20,17 @@ const GlAccessDropDown = ({ period, setPeriod, textColorIsWhite = false }) => {
     fetchGlPeriods();
   }, []);
 
-  // Ensure valid default selection
   useEffect(() => {
-    if (periods.length > 0 && !periods.some((p) => p.gl_period === period)) {
-      setPeriod(periods[0].gl_period);
+    if (periods.length === 0) return;
+
+    // Only set default if current period is not in the fetched periods
+    if (!periods.some((p) => p.gl_period === period)) {
+      setGlPeriod(periods[0].gl_period);
     }
-  }, [periods, period, setPeriod]);
+    else {
+      setGlPeriod(period);
+    }
+  }, [periods, period, setGlPeriod]);
 
   return (
     <div style={{ borderRadius: "10px", marginTop: "20px" }}>
@@ -44,7 +51,10 @@ const GlAccessDropDown = ({ period, setPeriod, textColorIsWhite = false }) => {
           id="gl-period-select"
           value={period}
           label="GL Period to access"
-          onChange={(e) => setPeriod(e.target.value)}
+          onChange={(e) => {
+            // setPeriod(e.target.value);
+            setGlPeriod(e.target.value);
+          }}
           sx={{
             color: textColorIsWhite ? "white" : "black", // text color
             "& .MuiOutlinedInput-notchedOutline": {
@@ -62,10 +72,7 @@ const GlAccessDropDown = ({ period, setPeriod, textColorIsWhite = false }) => {
           }}
         >
           {periods.map((p) => (
-            <MenuItem
-              value={p.gl_period}
-              key={p.gl_period}
-            >
+            <MenuItem value={p.gl_period} key={p.gl_period}>
               {p?.period_description}
             </MenuItem>
           ))}

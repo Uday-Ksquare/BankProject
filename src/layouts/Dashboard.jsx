@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link, NavLink, Outlet } from "react-router";
+import { Link, NavLink, Outlet, useSearchParams } from "react-router";
 import {
   AppBar,
   Box,
@@ -31,7 +31,11 @@ const drawerWidth = 270;
 
 export default function Layout() {
   const theme = useTheme();
-  const [period, setPeriod] = useState(getCurrentYearMonth());
+  // const [searchParams, setSearchParams] = useSearchParams();
+  // const glperiod = searchParams.get("period") || getCurrentYearMonth();
+  // const [period, setPeriod] = useState(glperiod);
+  // console.log(glperiod);
+  
   const isMobile = useMediaQuery(theme.breakpoints.down("md")); // md breakpoint
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [screens, setScreens] = useState([]);
@@ -178,21 +182,31 @@ export default function Layout() {
             />
 
             <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ display: "flex", alignItems: "center",color: "#FFFFFF",gap: 2 }}>
-              <GlAccessDropDown textColorIsWhite={true} period={period} setPeriod={setPeriod} />
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                color: "#FFFFFF",
+                gap: 2,
+              }}
+            >
+              <GlAccessDropDown
+                textColorIsWhite={true}
+                // period={period}
+                // setPeriod={setPeriod}
+              />
               {
-              <IconButton
-                color="inherit"
-                edge="end"
-                onClick={handleDrawerToggle}
-              >
-                <MenuIcon />
-              </IconButton>
-            }
+                <IconButton
+                  color="inherit"
+                  edge="end"
+                  onClick={handleDrawerToggle}
+                >
+                  <MenuIcon />
+                </IconButton>
+              }
             </Box>
 
             {/* Show Menu Icon only on Mobile */}
-            
 
             {/* Avatar (desktop only) */}
             {/* {!isMobile && (
