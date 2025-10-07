@@ -15,6 +15,7 @@ import EditDrawerComponent from "../pages/EditDrawerComponent";
 import { formatFinancial } from "../utils/consonants";
 import FormTextField from "./FormTextField";
 import { PatchDetails } from "../services/PatchDetails";
+import toast from "react-hot-toast";
 
 const updatedData = (data, editingRow, row) =>
   data.map((item) => ({
@@ -58,7 +59,7 @@ const getExtraIndent = (desc) => {
 
 const ExpandableRowTable = ({
   fetchServices,
-  descriptionWidth="50%",
+  descriptionWidth = "50%",
   row,
   level = 0,
   emptyAllColumns,
@@ -152,10 +153,16 @@ const ExpandableRowTable = ({
         cancelText="Cancel"
         setOpenEdit={setOpenEdit}
         onSubmit={() => {
-          PatchDetails(updatedData(editFields, editingRow, row)).then(() => {
-            setOpenEdit(false);
-            fetchServices();
-          })
+          PatchDetails(updatedData(editFields, editingRow, row))
+            .then(() => {
+              setOpenEdit(false);
+              toast.success("Updated successfully", { duration: 4000 });
+            })
+            .then(() => {
+              fetchServices();
+            }).catch(() => {
+              toast.error("This didn't work.")
+            });
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}>
@@ -186,7 +193,12 @@ const ExpandableRowTable = ({
                       Description
                     </TableCell>
                     {childColumns.map((col, idx) => (
-                      <TableCell width={width} key={idx} sx={headerCellStyles} align="right">
+                      <TableCell
+                        width={width}
+                        key={idx}
+                        sx={headerCellStyles}
+                        align="right"
+                      >
                         {col.columnName}
                       </TableCell>
                     ))}

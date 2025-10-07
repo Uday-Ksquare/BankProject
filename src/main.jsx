@@ -45,12 +45,14 @@ import PrOnePage from "./pages/PrOnePage.jsx";
 import SupplementMCurrencyNetPositions from "./pages/SupplementMCurrencyNetPositions.jsx";
 import { GlPeriodContextProvider } from "./Contexts/GlPeriodContextProvider.jsx";
 import SuppCurrencyLiabilitiesPositions from "./pages/SuppCurrencyLiabilitiesPositions.jsx";
+import  { Toaster } from 'react-hot-toast';
 
 const router = createBrowserRouter([
   {
     element: (
       <GlPeriodContextProvider>
         <App />
+        <Toaster  position="top-right"/>
       </GlPeriodContextProvider>
     ),
     children: [
@@ -207,9 +209,9 @@ const router = createBrowserRouter([
             element: <SuppGLoansForeignCurrencyPage />,
           },
           {
-            path:"/scr_supp_m_currency_Liabilities_positions",
-            element:<SuppCurrencyLiabilitiesPositions/>
-          }
+            path: "/scr_supp_m_currency_Liabilities_positions",
+            element: <SuppCurrencyLiabilitiesPositions />,
+          },
         ],
       },
 
