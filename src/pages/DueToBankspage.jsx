@@ -14,10 +14,13 @@ import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
+import { getHeadersService } from "../services/getHeadersService";
+import TableHeadingCard from "../components/TableHeadingCard";
 
 const DueToBankspage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
+  const [headers, setHeaders] = useState([]);
 
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
@@ -26,8 +29,12 @@ const DueToBankspage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
-
   useEffect(() => {
+    getHeadersService("/scr_supp_K1_due_to_banks").then((res) => {
+      setHeaders(res || []);
+    });
+  }, []);
+  const fetchServices = () => {
     getScreensData(
       "/scr_supp_K1_due_to_banks",
       glPeriod,
@@ -45,6 +52,9 @@ const DueToBankspage = () => {
         period: glPeriod,
       });
     });
+  };
+  useEffect(() => {
+    fetchServices();
   }, [page, rowsPerPage, setSearchParams, glPeriod]);
 
   const handleChangePage = (event, newPage) => {
@@ -57,12 +67,25 @@ const DueToBankspage = () => {
   };
 
   return (
-    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+    <Box
+      p={2}
+      sx={{
+        bgcolor: "#FFFFFF",
+        borderRadius: "10px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}
+    >
+      <TableHeadingCard
+        headingOne={headers[0]?.header_text}
+        SubHeading={headers[1]?.header_text}
+      />
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={{ width: "10%" }} sx={headerCellStyles}>
+              <TableCell style={{ width: "20%" }} sx={headerCellStyles}>
                 Description
               </TableCell>
               <TableCell
@@ -133,7 +156,8 @@ const DueToBankspage = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
-                descriptionWidth={"10%"}
+                fetchServices={fetchServices}
+                descriptionWidth={"20%"}
                 width={"10%"}
                 emptyAllColumns={[
                   {

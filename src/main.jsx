@@ -44,6 +44,7 @@ import ScrWorkSheetPage from "./pages/ScrWorkSheetPage.jsx";
 import PrOnePage from "./pages/PrOnePage.jsx";
 import SupplementMCurrencyNetPositions from "./pages/SupplementMCurrencyNetPositions.jsx";
 import { GlPeriodContextProvider } from "./Contexts/GlPeriodContextProvider.jsx";
+import SuppCurrencyLiabilitiesPositions from "./pages/SuppCurrencyLiabilitiesPositions.jsx";
 
 const router = createBrowserRouter([
   {
@@ -205,6 +206,10 @@ const router = createBrowserRouter([
             path: "/scr_supp_g_loans_foreign_currency",
             element: <SuppGLoansForeignCurrencyPage />,
           },
+          {
+            path:"/scr_supp_m_currency_Liabilities_positions",
+            element:<SuppCurrencyLiabilitiesPositions/>
+          }
         ],
       },
 

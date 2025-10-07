@@ -14,8 +14,11 @@ import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
+import TableHeadingCard from "../components/TableHeadingCard";
+import { getHeadersService } from "../services/getHeadersService";
 
 const FinancialDerivativesTwoPage = () => {
+    const [headers, setHeaders] = useState([]);
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -27,6 +30,11 @@ const FinancialDerivativesTwoPage = () => {
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
   useEffect(() => {
+    getHeadersService("/scr_supp_e2_financial_derivatives").then((res) => {
+      setHeaders(res || []);
+    });
+  }, []);
+  const fetchServices = () => {
     getScreensData(
       "/scr_supp_e2_financial_derivatives",
       glPeriod,
@@ -44,6 +52,9 @@ const FinancialDerivativesTwoPage = () => {
         period: glPeriod,
       });
     });
+  };
+  useEffect(() => {
+    fetchServices();
   }, [page, rowsPerPage, setSearchParams, glPeriod]);
 
   const handleChangePage = (event, newPage) => {
@@ -56,7 +67,17 @@ const FinancialDerivativesTwoPage = () => {
   };
 
   return (
-    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+    <Box p={2}  sx={{
+        bgcolor: "#FFFFFF",
+        borderRadius: "10px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}>
+      <TableHeadingCard
+        headingOne={headers[0]?.header_text}
+        SubHeading={headers[1]?.header_text}
+      />
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>
@@ -90,6 +111,7 @@ const FinancialDerivativesTwoPage = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
+              fetchServices={fetchServices}
                 width={"10%"}
                 emptyAllColumns={[
                   {

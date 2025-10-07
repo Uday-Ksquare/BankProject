@@ -17,7 +17,7 @@ import { getHeadersService } from "../services/getHeadersService";
 import TableHeadingCard from "../components/TableHeadingCard";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 
-const ScrWorkSheetPage = () => {
+const SuppCurrencyLiabilitiesPositions = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const [headers, setHeaders] = useState([]);
@@ -31,7 +31,7 @@ const ScrWorkSheetPage = () => {
 
   const fetchServices = ()=>
   {
-    getScreensData("/scr_worksheet", glPeriod, page + 1, rowsPerPage).then(
+    getScreensData("/scr_supp_m_currency_Liabilities_positions", glPeriod, page + 1, rowsPerPage).then(
       (res) => {
         setWorksheet({
           screens: res.screens || [],
@@ -51,7 +51,7 @@ const ScrWorkSheetPage = () => {
   }, [page, rowsPerPage, setSearchParams, glPeriod]);
 
   useEffect(() => {
-    getHeadersService("/scr_worksheet").then((res) => {
+    getHeadersService("/scr_supp_m_currency_Liabilities_positions").then((res) => {
       setHeaders(res || []);
     });
   }, []);
@@ -160,4 +160,4 @@ const ScrWorkSheetPage = () => {
   );
 };
 
-export default ScrWorkSheetPage;
+export default SuppCurrencyLiabilitiesPositions;

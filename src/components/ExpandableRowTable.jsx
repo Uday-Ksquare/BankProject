@@ -57,6 +57,7 @@ const getExtraIndent = (desc) => {
 };
 
 const ExpandableRowTable = ({
+  fetchServices,
   descriptionWidth="50%",
   row,
   level = 0,
@@ -150,7 +151,12 @@ const ExpandableRowTable = ({
         deleteText="Delete"
         cancelText="Cancel"
         setOpenEdit={setOpenEdit}
-        onSubmit={() => PatchDetails(updatedData(editFields, editingRow, row))}
+        onSubmit={() => {
+          PatchDetails(updatedData(editFields, editingRow, row)).then(() => {
+            setOpenEdit(false);
+            fetchServices();
+          })
+        }}
       >
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}>
           {editFields.map((field, index) => (

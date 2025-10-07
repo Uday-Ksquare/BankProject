@@ -31,11 +31,12 @@ const InterestRatesPage = () => {
   const { glPeriod } = useContext(GlPeriodContext);
 
   useEffect(() => {
-    getHeadersService("/scr_scr_supp_l_interest_ratesworksheet").then((res) => {
+    getHeadersService("/scr_supp_l_interest_rates").then((res) => {
       setHeaders(res || []);
     });
   }, []);
-  useEffect(() => {
+
+  const fetchServices = () => {
     getScreensData(
       "/scr_supp_l_interest_rates",
       glPeriod,
@@ -53,6 +54,9 @@ const InterestRatesPage = () => {
         period: glPeriod,
       });
     });
+  };
+  useEffect(() => {
+    fetchServices();
   }, [page, rowsPerPage, setSearchParams, glPeriod]);
 
   const handleChangePage = (event, newPage) => {
@@ -112,6 +116,7 @@ const InterestRatesPage = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
+                fetchServices={fetchServices}
                 width={"10%"}
                 emptyAllColumns={[
                   {
