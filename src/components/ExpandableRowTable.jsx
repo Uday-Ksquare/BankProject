@@ -175,9 +175,9 @@ const ExpandableRowTable = ({
               onChange={handleFieldChange}
             />
           ))}
-          {/* <pre>
+          <pre>
             {JSON.stringify(updatedData(editFields, editingRow, row), null, 2)}
-          </pre> */}
+          </pre>
         </Box>
       </EditDrawerComponent>
 
