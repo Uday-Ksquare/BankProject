@@ -15,11 +15,13 @@ import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
 import TableHeadingCard from "../components/TableHeadingCard";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
+import { getHeadersService } from "../services/getHeadersService";
 
 const SupplimentAOneDepositsPage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const { glPeriod } = useContext(GlPeriodContext);
+    const [headers, setHeaders] = useState([]);
 
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
@@ -28,8 +30,14 @@ const SupplimentAOneDepositsPage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
 
-  useEffect(() => {
-    getScreensData(
+    useEffect(() => {
+    getHeadersService("/scr_supp_a1_deposits").then((res) => {
+      setHeaders(res || []);
+    });
+  }, []);
+const fetchServices = ()=>
+{
+  getScreensData(
       "/scr_supp_a1_deposits",
       glPeriod,
       page + 1,
@@ -46,16 +54,11 @@ const SupplimentAOneDepositsPage = () => {
         period: glPeriod,
       });
     });
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
-  // useEffect(() => {
-  //   fetchCdssList(page, rowsPerPage);
+}
 
-  //   // update URL query string whenever page/size changes
-  //   setSearchParams({
-  //     page: (page + 1).toString(),
-  //     pageSize: rowsPerPage.toString(),
-  //   });
-  // }, [page, rowsPerPage, setSearchParams]);
+  useEffect(() => {
+    fetchServices();
+  }, [page, rowsPerPage, setSearchParams, glPeriod]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -78,8 +81,8 @@ const SupplimentAOneDepositsPage = () => {
       }}
     >
       <TableHeadingCard
-        headingOne={"Supplement A1 Deposits"}
-        SubHeading={"DEPOSITS CLASSIFIED BY SECTOR OF OWNER AND TYPE"}
+        headingOne={headers[0]?.header_text}
+        SubHeading={headers[1]?.header_text}
       />
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
@@ -128,6 +131,7 @@ const SupplimentAOneDepositsPage = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
+              fetchServices={fetchServices}
                 width={"10%"}
                 emptyAllColumns={[
                   {

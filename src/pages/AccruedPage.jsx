@@ -14,12 +14,14 @@ import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
+import TableHeadingCard from "../components/TableHeadingCard";
+import { getHeadersService } from "../services/getHeadersService";
 
 const AccruedPage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const { glPeriod } = useContext(GlPeriodContext);
-
+ const [headers, setHeaders] = useState([]);
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
   const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
@@ -27,8 +29,12 @@ const AccruedPage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
 
-
-  useEffect(() => {
+    useEffect(() => {
+      getHeadersService("/scr_accrued_interest").then((res) => {
+        setHeaders(res || []);
+      });
+    }, []);
+  const fetchServices = () => {
     getScreensData(
       "/scr_accrued_interest",
       glPeriod,
@@ -46,16 +52,11 @@ const AccruedPage = () => {
         period: glPeriod,
       });
     });
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
-  // useEffect(() => {
-  //   fetchCdssList(page, rowsPerPage);
+  };
 
-  //   // update URL query string whenever page/size changes
-  //   setSearchParams({
-  //     page: (page + 1).toString(),
-  //     pageSize: rowsPerPage.toString(),
-  //   });
-  // }, [page, rowsPerPage, setSearchParams]);
+  useEffect(() => {
+    fetchServices();
+  }, [page, rowsPerPage, setSearchParams, glPeriod]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -67,7 +68,17 @@ const AccruedPage = () => {
   };
 
   return (
-    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+    <Box p={2} sx={{
+        bgcolor: "#FFFFFF",
+        borderRadius: "10px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}>
+      <TableHeadingCard
+        headingOne={headers[0]?.header_text}
+        SubHeading={headers[1]?.header_text}
+      />
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>
@@ -101,6 +112,7 @@ const AccruedPage = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
+              fetchServices={fetchServices}
                 width={"10%"}
                 emptyAllColumns={[
                   {

@@ -13,15 +13,14 @@ import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
-import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 import { getHeadersService } from "../services/getHeadersService";
 import TableHeadingCard from "../components/TableHeadingCard";
+import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 
-const DueToDueFormOtherNonEccuPage = () => {
+const AntiguaCDPage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const [headers, setHeaders] = useState([]);
-
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
   const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
@@ -30,35 +29,32 @@ const DueToDueFormOtherNonEccuPage = () => {
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
 
-  useEffect(() => {
-    getHeadersService("/scr_supp_c_due_to_and_due_from_other_non_eccu").then(
+  const fetchServices = ()=>
+  {
+    getScreensData("/scr_antigua_cd", glPeriod, page + 1, rowsPerPage).then(
       (res) => {
-        setHeaders(res || []);
+        setWorksheet({
+          screens: res.screens || [],
+          totalItems: res.totalItems || 0,
+        });
+        // update URL query string whenever page/size changes
+        setSearchParams({
+          page: (page + 1).toString(),
+          pageSize: rowsPerPage.toString(),
+          period: glPeriod,
+        });
       }
     );
-  }, []);
-  const fetchServices = () => {
-    getScreensData(
-      "/scr_supp_c_due_to_and_due_from_other_non_eccu",
-      glPeriod,
-      page + 1,
-      rowsPerPage
-    ).then((res) => {
-      setWorksheet({
-        screens: res.screens || [],
-        totalItems: res.totalItems || 0,
-      });
-      // update URL query string whenever page/size changes
-      setSearchParams({
-        page: (page + 1).toString(),
-        pageSize: rowsPerPage.toString(),
-        period: glPeriod,
-      });
-    });
-  };
+  }
   useEffect(() => {
     fetchServices();
   }, [page, rowsPerPage, setSearchParams, glPeriod]);
+
+  useEffect(() => {
+    getHeadersService("/scr_antigua_cd").then((res) => {
+      setHeaders(res || []);
+    });
+  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -93,17 +89,24 @@ const DueToDueFormOtherNonEccuPage = () => {
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
-                style={{ width: "15%" }}
+                style={{ width: "10%" }}
                 align="right"
               >
-                Other Non ECCU Current Period
+                Current Period
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
-                style={{ width: "15%" }}
+                style={{ width: "10%" }}
                 align="right"
               >
-                Other Non ECCU Foreign Currency
+                Previous Period
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Variance
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -117,12 +120,18 @@ const DueToDueFormOtherNonEccuPage = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
-                fetchServices={fetchServices}
+              fetchServices={fetchServices}
+                width={"10%"}
                 emptyAllColumns={[
                   {
                     columnName: "ECCU Current Period",
                     columnValue: 0.0,
                     columnPosition: 1,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
                   },
                   {
                     columnName: "ECCU Foreign Currency",
@@ -151,4 +160,4 @@ const DueToDueFormOtherNonEccuPage = () => {
   );
 };
 
-export default DueToDueFormOtherNonEccuPage;
+export default AntiguaCDPage;

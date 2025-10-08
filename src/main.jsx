@@ -46,6 +46,7 @@ import SupplementMCurrencyNetPositions from "./pages/SupplementMCurrencyNetPosit
 import { GlPeriodContextProvider } from "./Contexts/GlPeriodContextProvider.jsx";
 import SuppCurrencyLiabilitiesPositions from "./pages/SuppCurrencyLiabilitiesPositions.jsx";
 import  { Toaster } from 'react-hot-toast';
+import AntiguaCDPage from "./pages/AntiguaCDPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -212,6 +213,10 @@ const router = createBrowserRouter([
             path: "/scr_supp_m_currency_Liabilities_positions",
             element: <SuppCurrencyLiabilitiesPositions />,
           },
+          {
+            path:"/scr_antigua_cd",
+            element:<AntiguaCDPage/>
+          }
         ],
       },
 
