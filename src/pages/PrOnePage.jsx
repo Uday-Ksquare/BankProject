@@ -13,6 +13,8 @@ import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
+import { getHeadersService } from "../services/getHeadersService";
+import TableHeadingCard from "../components/TableHeadingCard";
 
 const PrOnePage = () => {
   const [worksheet, setWorksheet] = useState({});
@@ -21,18 +23,18 @@ const PrOnePage = () => {
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
   const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
+  const [headers, setHeaders] = useState([]);
 
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
 
-
   useEffect(() => {
-    getScreensData(
-      "/scr_pr01",
-      "202502",
-      page + 1,
-      rowsPerPage
-    ).then((res) => {
+    getHeadersService("/scr_pr01").then((res) => {
+      setHeaders(res || []);
+    });
+  }, []);
+  useEffect(() => {
+    getScreensData("/scr_pr01", "202502", page + 1, rowsPerPage).then((res) => {
       setWorksheet({
         screens: res.screens || [],
         totalItems: res.totalItems || 0,
@@ -64,7 +66,20 @@ const PrOnePage = () => {
   };
 
   return (
-    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+    <Box
+      p={2}
+      sx={{
+        bgcolor: "#FFFFFF",
+        borderRadius: "10px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}
+    >
+      <TableHeadingCard
+        headingOne={headers[0]?.header_text}
+        SubHeading={headers[1]?.header_text}
+      />
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>
