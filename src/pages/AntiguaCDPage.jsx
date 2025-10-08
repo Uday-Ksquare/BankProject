@@ -1,162 +1,49 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Paper,
-  TablePagination,
-} from "@mui/material";
-import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
-import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
-import { getHeadersService } from "../services/getHeadersService";
-import TableHeadingCard from "../components/TableHeadingCard";
+import Table from "../components/Table";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 
 const AntiguaCDPage = () => {
-  const [worksheet, setWorksheet] = useState({});
+  const [data, setData] = useState({ screens: [], totalItems: 0 });
   const [searchParams, setSearchParams] = useSearchParams();
-  const [headers, setHeaders] = useState([]);
-  // read from URL, fallback defaults
-  const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
-  const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
+const { glPeriod } = useContext(GlPeriodContext);
 
-  const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
-  const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
-  const { glPeriod } = useContext(GlPeriodContext);
+  // ✅ safely parse numbers (fallbacks to default if invalid)
+  const pageNumber = parseInt(searchParams.get("pageNumber") || "1", 10);
+  const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
 
-  const fetchServices = ()=>
-  {
-    getScreensData("/scr_antigua_cd", glPeriod, page + 1, rowsPerPage).then(
-      (res) => {
-        setWorksheet({
+  // ✅ fetch API when params change
+  useEffect(() => {
+    getScreensData("/scr_antigua_cd", glPeriod, pageNumber, pageSize).then(
+      (res) =>
+        setData({
           screens: res.screens || [],
           totalItems: res.totalItems || 0,
-        });
-        // update URL query string whenever page/size changes
-        setSearchParams({
-          page: (page + 1).toString(),
-          pageSize: rowsPerPage.toString(),
-          period: glPeriod,
-        });
-      }
+        })
     );
-  }
-  useEffect(() => {
-    fetchServices();
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+  }, [pageNumber, pageSize, glPeriod]);
 
-  useEffect(() => {
-    getHeadersService("/scr_antigua_cd").then((res) => {
-      setHeaders(res || []);
-    });
-  }, []);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // reset to first page
+  // ✅ update URL (reset page to 1 if pageSize changes)
+  const handlePageChange = (newPage, newSize = pageSize) => {
+    const params = {
+      pageNumber: newSize !== pageSize ? 1 : newPage, // reset to 1 if size changed
+      pageSize: newSize,
+      period: glPeriod,
+    };
+    setSearchParams(params);
   };
 
   return (
-    <Box
-      p={2}
-      sx={{
-        bgcolor: "#FFFFFF",
-        borderRadius: "10px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px",
-      }}
-    >
-      <TableHeadingCard
-        headingOne={headers[0]?.header_text}
-        SubHeading={headers[1]?.header_text}
+    <div>
+      <Table
+        tableData={data.screens}
+        totalItems={data.totalItems}
+        onPageChange={handlePageChange}
+        pageNumber={pageNumber}
+        pageSize={pageSize}
       />
-      <Paper sx={{ overflowX: "auto" }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell style={{ width: "50%" }} sx={headerCellStyles}>
-                Description
-              </TableCell>
-              <TableCell
-                sx={headerCellStyles}
-                style={{ width: "10%" }}
-                align="right"
-              >
-                Current Period
-              </TableCell>
-              <TableCell
-                sx={headerCellStyles}
-                style={{ width: "10%" }}
-                align="right"
-              >
-                Previous Period
-              </TableCell>
-              <TableCell
-                sx={headerCellStyles}
-                style={{ width: "10%" }}
-                align="right"
-              >
-                Variance
-              </TableCell>
-              <TableCell
-                sx={headerCellStyles}
-                style={{ width: "10%" }}
-                align="right"
-              >
-                Actions
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {(worksheet?.screens || []).map((row) => (
-              <ExpandableRowTable
-              fetchServices={fetchServices}
-                width={"10%"}
-                emptyAllColumns={[
-                  {
-                    columnName: "ECCU Current Period",
-                    columnValue: 0.0,
-                    columnPosition: 1,
-                  },
-                  {
-                    columnName: "ECCU Foreign Currency",
-                    columnValue: 0.0,
-                    columnPosition: 2,
-                  },
-                  {
-                    columnName: "ECCU Foreign Currency",
-                    columnValue: 0.0,
-                    columnPosition: 2,
-                  },
-                ]}
-                key={row.conceptId}
-                row={row}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-      {/* Pagination Control */}
-      <TablePagination
-        component="div"
-        count={worksheet?.totalItems || 0}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25, 50]}
-      />
-    </Box>
+    </div>
   );
 };
 
