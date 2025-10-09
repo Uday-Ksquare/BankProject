@@ -91,14 +91,14 @@ const AccruedPage = () => {
                 style={{ width: "10%" }}
                 align="right"
               >
-                Current Period
+                Amount
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                FOREIGN CURRENCY
+                of which Accrued Interest
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
