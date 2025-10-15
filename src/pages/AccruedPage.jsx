@@ -21,19 +21,20 @@ const AccruedPage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const { glPeriod } = useContext(GlPeriodContext);
- const [headers, setHeaders] = useState([]);
+  const [headers, setHeaders] = useState([]);
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
   const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
+  const reportType = searchParams.get("reportType") || "PR01";
 
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
 
-    useEffect(() => {
-      getHeadersService("/scr_accrued_interest").then((res) => {
-        setHeaders(res || []);
-      });
-    }, []);
+  useEffect(() => {
+    getHeadersService("/scr_accrued_interest").then((res) => {
+      setHeaders(res || []);
+    });
+  }, []);
   const fetchServices = () => {
     getScreensData(
       "/scr_accrued_interest",
@@ -50,6 +51,7 @@ const AccruedPage = () => {
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
+        reportType: reportType,
       });
     });
   };
@@ -68,13 +70,16 @@ const AccruedPage = () => {
   };
 
   return (
-    <Box p={2} sx={{
+    <Box
+      p={2}
+      sx={{
         bgcolor: "#FFFFFF",
         borderRadius: "10px",
         display: "flex",
         flexDirection: "column",
         gap: "10px",
-      }}>
+      }}
+    >
       <TableHeadingCard
         headingOne={headers[0]?.header_text}
         SubHeading={headers[1]?.header_text}
@@ -112,7 +117,7 @@ const AccruedPage = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
-              fetchServices={fetchServices}
+                fetchServices={fetchServices}
                 width={"10%"}
                 emptyAllColumns={[
                   {

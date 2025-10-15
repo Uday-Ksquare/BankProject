@@ -29,11 +29,12 @@ export const cellStyles = {
 export const headerCellStyles = {
   ...cellStyles,
   fontWeight: "bold",
-  backgroundColor: "#dce6f1",
+  backgroundColor: "rgba(15, 44, 109, 1)",
+  color: "#fff",
 };
 
 export const groupHeaderStyles = {
   ...cellStyles,
   fontWeight: "bold",
-  backgroundColor: "#f2f2f2",
+  backgroundColor: "#E7EDF8",
 };

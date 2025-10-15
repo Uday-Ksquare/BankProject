@@ -45,7 +45,7 @@ import PrOnePage from "./pages/PrOnePage.jsx";
 import SupplementMCurrencyNetPositions from "./pages/SupplementMCurrencyNetPositions.jsx";
 import { GlPeriodContextProvider } from "./Contexts/GlPeriodContextProvider.jsx";
 import SuppCurrencyLiabilitiesPositions from "./pages/SuppCurrencyLiabilitiesPositions.jsx";
-import  { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 import AntiguaCDPage from "./pages/AntiguaCDPage.jsx";
 
 const router = createBrowserRouter([
@@ -53,7 +53,7 @@ const router = createBrowserRouter([
     element: (
       <GlPeriodContextProvider>
         <App />
-        <Toaster  position="top-right"/>
+        <Toaster position="top-right" />
       </GlPeriodContextProvider>
     ),
     children: [
@@ -62,7 +62,7 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
           {
-            path: "/scr_cdslst",
+            path: "/scr_cds_lst",
             element: <CdsLstPage />,
           },
           {
@@ -214,9 +214,9 @@ const router = createBrowserRouter([
             element: <SuppCurrencyLiabilitiesPositions />,
           },
           {
-            path:"/scr_antigua_cd",
-            element:<AntiguaCDPage/>
-          }
+            path: "/scr_antigua_cd",
+            element: <AntiguaCDPage />,
+          },
         ],
       },
 
