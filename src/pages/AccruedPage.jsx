@@ -25,7 +25,7 @@ const AccruedPage = () => {
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
   const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
-  const reportType = searchParams.get("reportType") || "PR01";
+  // const reportType = searchParams.get("reportType") || "PR01";
 
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
@@ -51,7 +51,7 @@ const AccruedPage = () => {
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
-        reportType: reportType,
+        // reportType: reportType,
       });
     });
   };
