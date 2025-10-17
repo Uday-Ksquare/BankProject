@@ -97,21 +97,35 @@ const SuppCurrencyLiabilitiesPositions = () => {
                 style={{ width: "10%" }}
                 align="right"
               >
-                Current Period
+                Territories (Residents) LIABILITIES	
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                Previous Period
+                Other ECCU Territories LIABILITIES
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                Variance
+                Non-ECCU Area CARICOM Countries LIABILITIES	
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Non-CARICOM Countries LIABILITIES		
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Total LIABILITIES	
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -132,6 +146,16 @@ const SuppCurrencyLiabilitiesPositions = () => {
                     columnName: "ECCU Current Period",
                     columnValue: 0.0,
                     columnPosition: 1,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
                   },
                   {
                     columnName: "ECCU Foreign Currency",

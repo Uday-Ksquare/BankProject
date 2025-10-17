@@ -9,6 +9,7 @@ import {
   Paper,
   TablePagination,
   Typography,
+  Skeleton,
 } from "@mui/material";
 import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
@@ -23,6 +24,7 @@ const AccruedPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { glPeriod } = useContext(GlPeriodContext);
   const [headers, setHeaders] = useState([]);
+  const [loading, setLoading] = useState(false);
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
   const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
@@ -37,6 +39,7 @@ const AccruedPage = () => {
     });
   }, []);
   const fetchServices = () => {
+    setLoading(true);
     getScreensData(
       "/scr_accrued_interest",
       glPeriod,
@@ -48,6 +51,7 @@ const AccruedPage = () => {
         totalItems: res.totalItems || 0,
         screenId: res.screenId || "",
       });
+      setLoading(false);
       // update URL query string whenever page/size changes
       setSearchParams({
         page: (page + 1).toString(),
@@ -82,13 +86,21 @@ const AccruedPage = () => {
         gap: "10px",
       }}
     >
-      <Typography sx={{ color: "#0F2C6D", fontWeight: "bold" }} variant="h6">
+      {
+        loading? (Array.from({ length: 3 }, (_, index) => (
+          <Skeleton key={index} variant="rectangular" height={50} />
+        ))):
+        (
+          <>
+          <Typography sx={{ color: "#0F2C6D", fontWeight: "bold" }} variant="h6">
         {worksheet?.screenId}
       </Typography>
       <TableHeadingCard
         headingOne={headers[0]?.header_text}
         SubHeading={headers[1]?.header_text}
-      />
+      /></>
+        )
+      }
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>
@@ -119,28 +131,32 @@ const AccruedPage = () => {
               </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {(worksheet?.screens || []).map((row) => (
-              <ExpandableRowTable
-                fetchServices={fetchServices}
-                width={"10%"}
-                emptyAllColumns={[
-                  {
-                    columnName: "ECCU Current Period",
-                    columnValue: 0.0,
-                    columnPosition: 1,
-                  },
-                  {
-                    columnName: "ECCU Foreign Currency",
-                    columnValue: 0.0,
-                    columnPosition: 2,
-                  },
-                ]}
-                key={row.conceptId}
-                row={row}
-              />
-            ))}
-          </TableBody>
+          {!loading ? (
+            <TableBody>
+              {(worksheet?.screens || []).map((row) => (
+                <ExpandableRowTable
+                  fetchServices={fetchServices}
+                  width={"10%"}
+                  emptyAllColumns={[
+                    {
+                      columnName: "ECCU Current Period",
+                      columnValue: 0.0,
+                      columnPosition: 1,
+                    },
+                    {
+                      columnName: "ECCU Foreign Currency",
+                      columnValue: 0.0,
+                      columnPosition: 2,
+                    },
+                  ]}
+                  key={row.conceptId}
+                  row={row}
+                />
+              ))}
+            </TableBody>
+          ) : (
+            <p>No Data to display</p>
+          )}
         </Table>
       </Paper>
       {/* Pagination Control */}
