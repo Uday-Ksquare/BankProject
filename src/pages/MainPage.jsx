@@ -69,7 +69,7 @@ const MainPage = () => {
         {screens.map((item) => (
           <Link
             style={{ textDecoration: "none", color: "black" }}
-            to={`/scr_pr01`}
+            to={`/${item.screenId}`}
           >
             <BaseCard
               screen_name={item.reptype_id}

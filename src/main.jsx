@@ -48,6 +48,7 @@ import SuppCurrencyLiabilitiesPositions from "./pages/SuppCurrencyLiabilitiesPos
 import { Toaster } from "react-hot-toast";
 import AntiguaCDPage from "./pages/AntiguaCDPage.jsx";
 import MainPage from "./pages/MainPage.jsx";
+import PageNotFound from "./pages/PageNotFound.jsx";
 
 const router = createBrowserRouter([
   {
@@ -67,7 +68,7 @@ const router = createBrowserRouter([
             element:<MainPage/>
           },
           {
-            path: "/scr_cds_lst",
+            path: "/scr_cdslst",
             element: <CdsLstPage />,
           },
           {
@@ -230,6 +231,10 @@ const router = createBrowserRouter([
       //   element: <div>Orders</div>,
       // },
     ], // root layout route
+  },
+  {
+    path: "*",
+    element: <PageNotFound />,
   },
 ]);
 
