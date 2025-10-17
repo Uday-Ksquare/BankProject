@@ -8,6 +8,7 @@ import {
   TableRow,
   Paper,
   TablePagination,
+  Typography,
 } from "@mui/material";
 import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
@@ -24,20 +25,19 @@ const SupplimentDepositPage = () => {
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
   const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
-      const [headers, setHeaders] = useState([]);
+  const [headers, setHeaders] = useState([]);
 
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
-    const { glPeriod } = useContext(GlPeriodContext);
+  const { glPeriod } = useContext(GlPeriodContext);
 
-    useEffect(() => {
+  useEffect(() => {
     getHeadersService("/scr_supp_a_deposits").then((res) => {
       setHeaders(res || []);
     });
   }, []);
-    const fetchServices = ()=>
-    {
-      getScreensData(
+  const fetchServices = () => {
+    getScreensData(
       "/scr_supp_a_deposits",
       glPeriod,
       page + 1,
@@ -46,6 +46,7 @@ const SupplimentDepositPage = () => {
       setWorksheet({
         screens: res.screens || [],
         totalItems: res.totalItems || 0,
+        screenId: res.screenId || "",
       });
       // update URL query string whenever page/size changes
       setSearchParams({
@@ -54,7 +55,7 @@ const SupplimentDepositPage = () => {
         period: glPeriod,
       });
     });
-    }
+  };
   useEffect(() => {
     fetchServices();
   }, [page, rowsPerPage, setSearchParams, glPeriod]);
@@ -79,6 +80,9 @@ const SupplimentDepositPage = () => {
         gap: "10px",
       }}
     >
+      <Typography sx={{ color: "#0F2C6D", fontWeight: "bold" }} variant="h6">
+        {worksheet?.screenId}
+      </Typography>
       <TableHeadingCard
         headingOne={headers[0]?.header_text}
         SubHeading={headers[1]?.header_text}
@@ -130,7 +134,7 @@ const SupplimentDepositPage = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
-              fetchServices={fetchServices}
+                fetchServices={fetchServices}
                 width={"10%"}
                 emptyAllColumns={[
                   {

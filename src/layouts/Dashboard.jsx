@@ -100,14 +100,13 @@ export default function Layout() {
             }}
           >
             {/* Logo */}
-            <img
-              src={TheKsquareGroupLogo}
-              alt="The Ksquare Group Logo"
-              style={{
-                height: isMobile ? "30px" : "50px",
-                marginRight: "16px",
-              }}
-            />
+            <Link to="/">
+              <img
+                src={TheKsquareGroupLogo}
+                alt="TheKsquareGroupLogo"
+                style={{ height: "40px" }}
+              />
+            </Link>
 
             {isMobile ? null : <Box sx={{ flexGrow: 1 }} />}
             <Box
@@ -189,9 +188,9 @@ export default function Layout() {
           >
             {screens.sourceFiles &&
               screens.sourceFiles.map((file) => (
-                <MenuItemPro style={{marginLeft: "20px"}} component={<Link to={file} />}>
+                <MenuItemPro style={{marginLeft: "20px"}} component={<Link to={file.screen_id} />}>
                   {" "}
-                  {file}{" "}
+                  {file.screen_name}{" "}
                 </MenuItemPro>
               ))}
           </SubMenu>
@@ -209,10 +208,10 @@ export default function Layout() {
                 screens.outputFIles.map((file) => (
                   <MenuItemPro
                     icon={<img src={BookMarkIcon} />}
-                    component={<Link to={file} />}
+                    component={<Link to={file.screen_id} />}
                   >
                     {" "}
-                    {file}{" "}
+                    {file.screen_name}{" "}
                   </MenuItemPro>
                 ))}
             </SubMenu>
@@ -224,9 +223,9 @@ export default function Layout() {
             >
               {screens.reportFiles &&
                 screens.reportFiles.map((file) => (
-                  <MenuItemPro style={{marginLeft: "20px"}} component={<Link to={file} />}>
+                  <MenuItemPro style={{marginLeft: "20px"}} component={<Link to={file.screen_id} />}>
                     {" "}
-                    {file}{" "}
+                    {file.screen_name}{" "}
                   </MenuItemPro>
                 ))}
             </SubMenu>

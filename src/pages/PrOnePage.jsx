@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -15,10 +15,12 @@ import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
 import { getHeadersService } from "../services/getHeadersService";
 import TableHeadingCard from "../components/TableHeadingCard";
+import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 
 const PrOnePage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
+  const { glPeriod } = useContext(GlPeriodContext);
 
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
@@ -34,7 +36,7 @@ const PrOnePage = () => {
     });
   }, []);
   useEffect(() => {
-    getScreensData("/scr_pr01", "202502", page + 1, rowsPerPage).then((res) => {
+    getScreensData("/scr_pr01", glPeriod, page + 1, rowsPerPage).then((res) => {
       setWorksheet({
         screens: res.screens || [],
         totalItems: res.totalItems || 0,
@@ -43,18 +45,10 @@ const PrOnePage = () => {
       setSearchParams({
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
+        period: glPeriod,
       });
     });
-  }, [page, rowsPerPage, setSearchParams]);
-  // useEffect(() => {
-  //   fetchCdssList(page, rowsPerPage);
-
-  //   // update URL query string whenever page/size changes
-  //   setSearchParams({
-  //     page: (page + 1).toString(),
-  //     pageSize: rowsPerPage.toString(),
-  //   });
-  // }, [page, rowsPerPage, setSearchParams]);
+  }, [page, rowsPerPage, setSearchParams, glPeriod]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

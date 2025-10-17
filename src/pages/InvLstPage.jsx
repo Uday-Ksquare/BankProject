@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getScreensData } from "../services/getScreensData";
 import Table from "../components/Table";
+import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 
 const InvLstPage = () => {
   const [data, setData] = useState({ screens: [], totalItems: 0 });
   const [searchParams, setSearchParams] = useSearchParams();
+  const { glPeriod } = useContext(GlPeriodContext);
 
   // ✅ safely parse numbers (fallbacks to default if invalid)
   const pageNumber = parseInt(searchParams.get("pageNumber") || "1", 10);
@@ -13,14 +15,13 @@ const InvLstPage = () => {
 
   // ✅ fetch API when params change
   useEffect(() => {
-    getScreensData("/scr_invlst", "202502", pageNumber, pageSize).then(
-      (res) =>
-        setData({
-          screens: res.screens || [],
-          totalItems: res.totalItems || 0,
-        })
+    getScreensData("/scr_invlst", glPeriod, pageNumber, pageSize).then((res) =>
+      setData({
+        screens: res.screens || [],
+        totalItems: res.totalItems || 0,
+      })
     );
-  }, [pageNumber, pageSize]);
+  }, [pageNumber, pageSize, glPeriod]);
 
   // ✅ update URL (reset page to 1 if pageSize changes)
   const handlePageChange = (newPage, newSize = pageSize) => {

@@ -8,6 +8,7 @@ import {
   TableRow,
   Paper,
   TablePagination,
+  Typography,
 } from "@mui/material";
 import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
@@ -20,7 +21,7 @@ import { getHeadersService } from "../services/getHeadersService";
 const DueToDueFormOtherNonCaricomPage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
-    const [headers, setHeaders] = useState([]);
+  const [headers, setHeaders] = useState([]);
 
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
@@ -30,7 +31,7 @@ const DueToDueFormOtherNonCaricomPage = () => {
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
 
-  const fetchServices =  () => {
+  const fetchServices = () => {
     getScreensData(
       "/scr_supp_c_due_to_and_due_from_other_non_caricom",
       glPeriod,
@@ -40,6 +41,7 @@ const DueToDueFormOtherNonCaricomPage = () => {
       setWorksheet({
         screens: res.screens || [],
         totalItems: res.totalItems || 0,
+        screenId: res.screenId || "",
       });
       // update URL query string whenever page/size changes
       setSearchParams({
@@ -48,13 +50,15 @@ const DueToDueFormOtherNonCaricomPage = () => {
         period: glPeriod,
       });
     });
-  }
+  };
 
-    useEffect(() => {
-      getHeadersService("/scr_supp_c_due_to_and_due_from_other_non_caricom").then((res) => {
+  useEffect(() => {
+    getHeadersService("/scr_supp_c_due_to_and_due_from_other_non_caricom").then(
+      (res) => {
         setHeaders(res || []);
-      });
-    }, []);
+      }
+    );
+  }, []);
   useEffect(() => {
     fetchServices();
   }, [page, rowsPerPage, setSearchParams, glPeriod]);
@@ -69,13 +73,19 @@ const DueToDueFormOtherNonCaricomPage = () => {
   };
 
   return (
-    <Box p={2} sx={{
+    <Box
+      p={2}
+      sx={{
         bgcolor: "#FFFFFF",
         borderRadius: "10px",
         display: "flex",
         flexDirection: "column",
         gap: "10px",
-      }}>
+      }}
+    >
+      <Typography sx={{ color: "#0F2C6D", fontWeight: "bold" }} variant="h6">
+        {worksheet?.screenId}
+      </Typography>
       <TableHeadingCard
         headingOne={headers[0]?.header_text}
         SubHeading={headers[1]?.header_text}
@@ -113,7 +123,7 @@ const DueToDueFormOtherNonCaricomPage = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
-              fetchServices={fetchServices}
+                fetchServices={fetchServices}
                 emptyAllColumns={[
                   {
                     columnName: "ECCU Current Period",

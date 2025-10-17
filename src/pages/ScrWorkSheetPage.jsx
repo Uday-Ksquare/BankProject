@@ -8,6 +8,7 @@ import {
   TableRow,
   Paper,
   TablePagination,
+  Typography,
 } from "@mui/material";
 import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
@@ -36,6 +37,7 @@ const ScrWorkSheetPage = () => {
         setWorksheet({
           screens: res.screens || [],
           totalItems: res.totalItems || 0,
+          screenId: res.screenId || "",
         });
         // update URL query string whenever page/size changes
         setSearchParams({
@@ -76,6 +78,9 @@ const ScrWorkSheetPage = () => {
         gap: "10px",
       }}
     >
+      <Typography sx={{ color: "#0F2C6D", fontWeight: "bold" }} variant="h6">
+        {worksheet?.screenId}
+      </Typography>
       <TableHeadingCard
         headingOne={headers[0]?.header_text}
         SubHeading={headers[1]?.header_text}

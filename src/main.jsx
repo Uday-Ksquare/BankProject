@@ -47,6 +47,7 @@ import { GlPeriodContextProvider } from "./Contexts/GlPeriodContextProvider.jsx"
 import SuppCurrencyLiabilitiesPositions from "./pages/SuppCurrencyLiabilitiesPositions.jsx";
 import { Toaster } from "react-hot-toast";
 import AntiguaCDPage from "./pages/AntiguaCDPage.jsx";
+import MainPage from "./pages/MainPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
         path: "/",
         element: <Layout />,
         children: [
+          {
+            path:"/",
+            element:<MainPage/>
+          },
           {
             path: "/scr_cds_lst",
             element: <CdsLstPage />,

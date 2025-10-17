@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -8,15 +8,20 @@ import {
   TableRow,
   Paper,
   TablePagination,
+  Typography,
 } from "@mui/material";
 import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
 import ExpandableRowTable from "../components/ExpandableRowTable";
 import { getScreensData } from "../services/getScreensData";
+import { GlPeriodContext } from "../Contexts/GlPeriodContext";
+import { getHeadersService } from "../services/getHeadersService";
+import TableHeadingCard from "../components/TableHeadingCard";
 
 const SupplementMCurrencyNetPositions = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
+  const [headers, setHeaders] = useState([]);
 
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
@@ -24,35 +29,32 @@ const SupplementMCurrencyNetPositions = () => {
 
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
-
-
+  const { glPeriod } = useContext(GlPeriodContext);
   useEffect(() => {
-    getScreensData(
-      "/scr_supp_m_currency_net_positions",
-      "202502",
-      page + 1,
-      rowsPerPage
-    ).then((res) => {
-      setWorksheet({
-        screens: res.screens || [],
-        totalItems: res.totalItems || 0,
-      });
-      // update URL query string whenever page/size changes
-      setSearchParams({
-        page: (page + 1).toString(),
-        pageSize: rowsPerPage.toString(),
-      });
+    getHeadersService("/scr_supp_m_currency_net_positions").then((res) => {
+      setHeaders(res || []);
     });
-  }, [page, rowsPerPage, setSearchParams]);
-  // useEffect(() => {
-  //   fetchCdssList(page, rowsPerPage);
-
-  //   // update URL query string whenever page/size changes
-  //   setSearchParams({
-  //     page: (page + 1).toString(),
-  //     pageSize: rowsPerPage.toString(),
-  //   });
-  // }, [page, rowsPerPage, setSearchParams]);
+  }, []);
+  const fetchServices = () => {
+    getScreensData("/scr_supp_m_currency_net_positions", glPeriod, page + 1, rowsPerPage).then(
+      (res) => {
+        setWorksheet({
+          screens: res.screens || [],
+          totalItems: res.totalItems || 0,
+          screenId: res.screenId || "",
+        });
+        // update URL query string whenever page/size changes
+        setSearchParams({
+          page: (page + 1).toString(),
+          pageSize: rowsPerPage.toString(),
+          period: glPeriod,
+        });
+      }
+    );
+  };
+  useEffect(() => {
+    fetchServices();
+  }, [page, rowsPerPage, setSearchParams, glPeriod]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -64,12 +66,28 @@ const SupplementMCurrencyNetPositions = () => {
   };
 
   return (
-    <Box p={2} sx={{ bgcolor: "#FFFFFF", borderRadius: "10px" }}>
+    <Box
+      p={2}
+      sx={{
+        bgcolor: "#FFFFFF",
+        borderRadius: "10px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}
+    >
+      <Typography sx={{ color: "#0F2C6D", fontWeight: "bold" }} variant="h6">
+        {worksheet?.screenId}
+      </Typography>
+      <TableHeadingCard
+        headingOne={headers[0]?.header_text}
+        SubHeading={headers[1]?.header_text}
+      />
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={{ width: "10%" }} sx={headerCellStyles}>
+              <TableCell style={{ width: "50%" }} sx={headerCellStyles}>
                 Description
               </TableCell>
               <TableCell
@@ -77,56 +95,35 @@ const SupplementMCurrencyNetPositions = () => {
                 style={{ width: "10%" }}
                 align="right"
               >
-                Current Account/ Call Account
+                Territories (Residents) Net Position
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                Fixed/Time Deposits/Non-negotiable CDs
+                Other ECCU Territories Net Position
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                Negotiable Certificates of Deposits
+                Non-ECCU Area CARICOM Countries Net Position
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                Borrowings
+                Non-CARICOM Countries Net Position
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                Repurchase Agreements
-              </TableCell>
-              <TableCell
-                sx={headerCellStyles}
-                style={{ width: "10%" }}
-                align="right"
-              >
-                Other
-              </TableCell>
-              <TableCell
-                sx={headerCellStyles}
-                style={{ width: "10%" }}
-                align="right"
-              >
-                Balance outstanding
-              </TableCell>
-              <TableCell
-                sx={headerCellStyles}
-                style={{ width: "10%" }}
-                align="right"
-              >
-                Collateral Value (EC Equiv)
+                Total Net Position
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -140,7 +137,7 @@ const SupplementMCurrencyNetPositions = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
-              descriptionWidth={"10%"}
+                fetchServices={fetchServices}
                 width={"10%"}
                 emptyAllColumns={[
                   {
@@ -154,29 +151,14 @@ const SupplementMCurrencyNetPositions = () => {
                     columnPosition: 2,
                   },
                   {
-                    columnName: "ECCU Current Period",
-                    columnValue: 0.0,
-                    columnPosition: 1,
-                  },
-                  {
                     columnName: "ECCU Foreign Currency",
                     columnValue: 0.0,
                     columnPosition: 2,
                   },
                   {
-                    columnName: "ECCU Current Period",
-                    columnValue: 0.0,
-                    columnPosition: 1,
-                  },
-                  {
                     columnName: "ECCU Foreign Currency",
                     columnValue: 0.0,
                     columnPosition: 2,
-                  },
-                  {
-                    columnName: "ECCU Current Period",
-                    columnValue: 0.0,
-                    columnPosition: 1,
                   },
                   {
                     columnName: "ECCU Foreign Currency",
