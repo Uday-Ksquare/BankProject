@@ -56,7 +56,7 @@ const MainPage = () => {
         </Typography>
       </Box>
 
-      <Stack
+      <Stack 
         direction="row"
         spacing={0}
         sx={{
