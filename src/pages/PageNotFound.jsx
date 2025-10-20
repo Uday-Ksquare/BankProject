@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import ksquareLogo from "../assets/Ksquaredarklogo.svg";
+import ksquareLogo from "../assets/ksquaredarklogo.svg";
 import pageNotFoundImg from "../assets/NotFound.svg";
 
 const PageNotFound = () => {
