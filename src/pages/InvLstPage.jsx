@@ -12,22 +12,24 @@ const InvLstPage = () => {
   // ✅ safely parse numbers (fallbacks to default if invalid)
   const pageNumber = parseInt(searchParams.get("pageNumber") || "1", 10);
   const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
+    const reportType = searchParams.get("reportType") || "PR01";
 
   // ✅ fetch API when params change
   useEffect(() => {
-    getScreensData("/scr_invlst", glPeriod, pageNumber, pageSize).then((res) =>
+    getScreensData("/scr_invlst",reportType, glPeriod, pageNumber, pageSize).then((res) =>
       setData({
         screens: res.screens || [],
         totalItems: res.totalItems || 0,
       })
     );
-  }, [pageNumber, pageSize, glPeriod]);
+  }, [pageNumber, pageSize, glPeriod,reportType]);
 
   // ✅ update URL (reset page to 1 if pageSize changes)
   const handlePageChange = (newPage, newSize = pageSize) => {
     const params = {
       pageNumber: newSize !== pageSize ? 1 : newPage, // reset to 1 if size changed
       pageSize: newSize,
+      reportType:reportType
     };
     setSearchParams(params);
   };

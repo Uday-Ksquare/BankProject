@@ -30,6 +30,8 @@ const DueToBankspage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
+    const reportType = searchParams.get("reportType") || "PR01";
+
   useEffect(() => {
     getHeadersService("/scr_supp_K1_due_to_banks").then((res) => {
       setHeaders(res || []);
@@ -38,6 +40,7 @@ const DueToBankspage = () => {
   const fetchServices = () => {
     getScreensData(
       "/scr_supp_K1_due_to_banks",
+      reportType,
       glPeriod,
       page + 1,
       rowsPerPage
@@ -52,12 +55,15 @@ const DueToBankspage = () => {
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
+        reportType:reportType
       });
     });
   };
+  
   useEffect(() => {
     fetchServices();
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage, glPeriod, reportType]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

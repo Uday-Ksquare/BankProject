@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   TableRow,
   TableCell,
@@ -16,14 +16,17 @@ import { formatFinancial } from "../utils/consonants";
 import FormTextField from "./FormTextField";
 import { PatchDetails } from "../services/PatchDetails";
 import toast from "react-hot-toast";
+import { GlPeriodContext } from "../Contexts/GlPeriodContext";
+import { useSearchParams } from "react-router-dom";
 
-const updatedData = (data, editingRow, row) =>
+const updatedData = (data, editingRow, row, glPeriod,reportType) =>
   data.map((item) => ({
     ...item,
     detailId: editingRow.detailId,
-    glPeriod: "202502",
+    glPeriod: glPeriod,
     conceptId: row.conceptId,
     columnValue: parseFloat(item.columnValue),
+    reptypeId:reportType
   }));
 
 const cellStyles = {
@@ -70,7 +73,11 @@ const ExpandableRowTable = ({
   const [editingRow, setEditingRow] = useState(null);
   const [editFields, setEditFields] = useState([]);
   const hasChildren = row.detalles && row.detalles.length > 0;
+  const { glPeriod } = useContext(GlPeriodContext);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const reportType = searchParams.get("reportType") || "PR01";
 
+  
   useEffect(() => {
     setEditFields(editingRow?.allColumns || []);
   }, [editingRow]);
@@ -153,15 +160,16 @@ const ExpandableRowTable = ({
         cancelText="Cancel"
         setOpenEdit={setOpenEdit}
         onSubmit={() => {
-          PatchDetails(updatedData(editFields, editingRow, row))
+          PatchDetails(updatedData(editFields, editingRow, row, glPeriod,reportType))
             .then(() => {
               setOpenEdit(false);
               toast.success("Updated successfully", { duration: 4000 });
             })
             .then(() => {
               fetchServices();
-            }).catch(() => {
-              toast.error("This didn't work.")
+            })
+            .catch(() => {
+              toast.error("This didn't work.");
             });
         }}
       >
@@ -176,7 +184,7 @@ const ExpandableRowTable = ({
             />
           ))}
           <pre>
-            {JSON.stringify(updatedData(editFields, editingRow, row), null, 2)}
+            {JSON.stringify(updatedData(editFields, editingRow, row,glPeriod,reportType), null, 2)}
           </pre>
         </Box>
       </EditDrawerComponent>

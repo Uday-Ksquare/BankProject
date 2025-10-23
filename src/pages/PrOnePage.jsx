@@ -26,6 +26,7 @@ const PrOnePage = () => {
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
   const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
   const [headers, setHeaders] = useState([]);
+  const reportType = searchParams.get("reportType") || "PR01";
 
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
@@ -36,7 +37,7 @@ const PrOnePage = () => {
     });
   }, []);
   useEffect(() => {
-    getScreensData("/scr_pr01", glPeriod, page + 1, rowsPerPage).then((res) => {
+    getScreensData("/scr_pr01",reportType, glPeriod, page + 1, rowsPerPage).then((res) => {
       setWorksheet({
         screens: res.screens || [],
         totalItems: res.totalItems || 0,
@@ -46,9 +47,10 @@ const PrOnePage = () => {
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
+        reportType: reportType,
       });
     });
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+  }, [page, rowsPerPage, reportType, glPeriod]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

@@ -28,8 +28,7 @@ const AccruedPage = () => {
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
   const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
-  // const reportType = searchParams.get("reportType") || "PR01";
-
+  const reportType = searchParams.get("reportType") || "PR01";
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
 
@@ -42,6 +41,7 @@ const AccruedPage = () => {
     setLoading(true);
     getScreensData(
       "/scr_accrued_interest",
+      reportType,
       glPeriod,
       page + 1,
       rowsPerPage
@@ -57,14 +57,15 @@ const AccruedPage = () => {
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
-        // reportType: reportType,
+        reportType: reportType,
       });
     });
   };
 
   useEffect(() => {
     fetchServices();
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage, glPeriod, reportType]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -86,21 +87,24 @@ const AccruedPage = () => {
         gap: "10px",
       }}
     >
-      {
-        loading? (Array.from({ length: 3 }, (_, index) => (
+      {loading ? (
+        Array.from({ length: 3 }, (_, index) => (
           <Skeleton key={index} variant="rectangular" height={50} />
-        ))):
-        (
-          <>
-          <Typography sx={{ color: "#0F2C6D", fontWeight: "bold" }} variant="h6">
-        {worksheet?.screenId}
-      </Typography>
-      <TableHeadingCard
-        headingOne={headers[0]?.header_text}
-        SubHeading={headers[1]?.header_text}
-      /></>
-        )
-      }
+        ))
+      ) : (
+        <>
+          <Typography
+            sx={{ color: "#0F2C6D", fontWeight: "bold" }}
+            variant="h6"
+          >
+            {worksheet?.screenId}
+          </Typography>
+          <TableHeadingCard
+            headingOne={headers[0]?.header_text}
+            SubHeading={headers[1]?.header_text}
+          />
+        </>
+      )}
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>

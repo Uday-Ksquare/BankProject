@@ -29,28 +29,35 @@ const ScrWorkSheetPage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
+  const reportType = searchParams.get("reportType") || "PR01";
 
-  const fetchServices = ()=>
-  {
-    getScreensData("/scr_worksheet", glPeriod, page + 1, rowsPerPage).then(
-      (res) => {
-        setWorksheet({
-          screens: res.screens || [],
-          totalItems: res.totalItems || 0,
-          screenId: res.screenId || "",
-        });
-        // update URL query string whenever page/size changes
-        setSearchParams({
-          page: (page + 1).toString(),
-          pageSize: rowsPerPage.toString(),
-          period: glPeriod,
-        });
-      }
-    );
-  }
+  const fetchServices = () => {
+    getScreensData(
+      "/scr_worksheet",
+      reportType,
+      glPeriod,
+      page + 1,
+      rowsPerPage
+    ).then((res) => {
+      setWorksheet({
+        screens: res.screens || [],
+        totalItems: res.totalItems || 0,
+        screenId: res.screenId || "",
+      });
+      // update URL query string whenever page/size changes
+      setSearchParams({
+        page: (page + 1).toString(),
+        pageSize: rowsPerPage.toString(),
+        period: glPeriod,
+        reportType: reportType,
+      });
+    });
+  };
+
   useEffect(() => {
     fetchServices();
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage, glPeriod, reportType]);
 
   useEffect(() => {
     getHeadersService("/scr_worksheet").then((res) => {
@@ -125,7 +132,7 @@ const ScrWorkSheetPage = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
-              fetchServices={fetchServices}
+                fetchServices={fetchServices}
                 width={"10%"}
                 emptyAllColumns={[
                   {

@@ -25,37 +25,44 @@ const SuppCurrencyLiabilitiesPositions = () => {
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
   const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
-
+  const reportType = searchParams.get("reportType") || "PR01";
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
 
-  const fetchServices = ()=>
-  {
-    getScreensData("/scr_supp_m_currency_Liabilities_positions", glPeriod, page + 1, rowsPerPage).then(
-      (res) => {
-        setWorksheet({
-          screens: res.screens || [],
-          totalItems: res.totalItems || 0,
-          screenId: res.screenId || "",
-        });
-        // update URL query string whenever page/size changes
-        setSearchParams({
-          page: (page + 1).toString(),
-          pageSize: rowsPerPage.toString(),
-          period: glPeriod,
-        });
-      }
-    );
-  }
+  const fetchServices = () => {
+    getScreensData(
+      "/scr_supp_m_currency_Liabilities_positions",
+      reportType,
+      glPeriod,
+      page + 1,
+      rowsPerPage
+    ).then((res) => {
+      setWorksheet({
+        screens: res.screens || [],
+        totalItems: res.totalItems || 0,
+        screenId: res.screenId || "",
+      });
+      // update URL query string whenever page/size changes
+      setSearchParams({
+        page: (page + 1).toString(),
+        pageSize: rowsPerPage.toString(),
+        period: glPeriod,
+        reportType:reportType
+      });
+    });
+  };
   useEffect(() => {
     fetchServices();
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage, glPeriod, reportType]);
 
   useEffect(() => {
-    getHeadersService("/scr_supp_m_currency_Liabilities_positions").then((res) => {
-      setHeaders(res || []);
-    });
+    getHeadersService("/scr_supp_m_currency_Liabilities_positions").then(
+      (res) => {
+        setHeaders(res || []);
+      }
+    );
   }, []);
 
   const handleChangePage = (event, newPage) => {
@@ -97,7 +104,7 @@ const SuppCurrencyLiabilitiesPositions = () => {
                 style={{ width: "10%" }}
                 align="right"
               >
-                Territories (Residents) LIABILITIES	
+                Territories (Residents) LIABILITIES
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -111,21 +118,21 @@ const SuppCurrencyLiabilitiesPositions = () => {
                 style={{ width: "10%" }}
                 align="right"
               >
-                Non-ECCU Area CARICOM Countries LIABILITIES	
+                Non-ECCU Area CARICOM Countries LIABILITIES
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                Non-CARICOM Countries LIABILITIES		
+                Non-CARICOM Countries LIABILITIES
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                Total LIABILITIES	
+                Total LIABILITIES
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -139,7 +146,7 @@ const SuppCurrencyLiabilitiesPositions = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
-              fetchServices={fetchServices}
+                fetchServices={fetchServices}
                 width={"10%"}
                 emptyAllColumns={[
                   {

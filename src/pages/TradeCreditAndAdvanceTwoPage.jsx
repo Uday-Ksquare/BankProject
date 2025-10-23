@@ -26,6 +26,7 @@ const TradeCreditAndAdvanceTwoPage = () => {
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
   const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
+  const reportType = searchParams.get("reportType") || "PR01";
   useEffect(() => {
     getHeadersService("/scr_supp_f2_trade_credit_and_advance").then((res) => {
       setHeaders(res || []);
@@ -37,6 +38,7 @@ const TradeCreditAndAdvanceTwoPage = () => {
   const fetchServices = () => {
     getScreensData(
       "/scr_supp_f2_trade_credit_and_advance",
+      reportType,
       glPeriod,
       page + 1,
       rowsPerPage
@@ -51,12 +53,14 @@ const TradeCreditAndAdvanceTwoPage = () => {
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
+        reportType: reportType,
       });
     });
   };
   useEffect(() => {
     fetchServices();
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage, glPeriod, reportType]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

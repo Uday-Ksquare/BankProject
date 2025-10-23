@@ -30,6 +30,7 @@ const InvestmentAndDebunturetwoPage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
+    const reportType = searchParams.get("reportType") || "PR01";
 
   useEffect(() => {
     getHeadersService("/scr_supp_h2_investment_and_debenture").then((res) => {
@@ -39,6 +40,7 @@ const InvestmentAndDebunturetwoPage = () => {
   const fetchServices = () => {
     getScreensData(
       "/scr_supp_h2_investment_and_debenture",
+      reportType,
       glPeriod,
       page + 1,
       rowsPerPage
@@ -53,12 +55,15 @@ const InvestmentAndDebunturetwoPage = () => {
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
+        reportType:reportType
       });
     });
   };
-  useEffect(() => {
-    fetchServices();
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+
+    useEffect(() => {
+      fetchServices();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page, rowsPerPage, glPeriod, reportType]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

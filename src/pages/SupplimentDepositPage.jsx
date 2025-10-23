@@ -21,6 +21,7 @@ import { getHeadersService } from "../services/getHeadersService";
 const SupplimentDepositPage = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
+  const reportType = searchParams.get("reportType") || "PR01";
 
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
@@ -39,6 +40,7 @@ const SupplimentDepositPage = () => {
   const fetchServices = () => {
     getScreensData(
       "/scr_supp_a_deposits",
+      reportType,
       glPeriod,
       page + 1,
       rowsPerPage
@@ -53,12 +55,15 @@ const SupplimentDepositPage = () => {
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
+        reportType: reportType,
       });
     });
   };
+
   useEffect(() => {
     fetchServices();
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage, glPeriod, reportType]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

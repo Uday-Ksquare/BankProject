@@ -30,6 +30,7 @@ const InterestRatesPage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
+  const reportType = searchParams.get("reportType") || "PR01";
 
   useEffect(() => {
     getHeadersService("/scr_supp_l_interest_rates").then((res) => {
@@ -40,6 +41,7 @@ const InterestRatesPage = () => {
   const fetchServices = () => {
     getScreensData(
       "/scr_supp_l_interest_rates",
+      reportType,
       glPeriod,
       page + 1,
       rowsPerPage
@@ -54,12 +56,15 @@ const InterestRatesPage = () => {
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
+        reportType: reportType,
       });
     });
   };
+
   useEffect(() => {
     fetchServices();
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage, glPeriod, reportType]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -100,14 +105,28 @@ const InterestRatesPage = () => {
                 style={{ width: "10%" }}
                 align="right"
               >
-                Minimum
+                Minimum EC Dollar	
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                Maximum
+                Miaximum EC Dollar	
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Minimum Foreign Currency	
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Maximum Foreign Currency	
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -124,6 +143,16 @@ const InterestRatesPage = () => {
                 fetchServices={fetchServices}
                 width={"10%"}
                 emptyAllColumns={[
+                  {
+                    columnName: "ECCU Current Period",
+                    columnValue: 0.0,
+                    columnPosition: 1,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
+                  },
                   {
                     columnName: "ECCU Current Period",
                     columnValue: 0.0,

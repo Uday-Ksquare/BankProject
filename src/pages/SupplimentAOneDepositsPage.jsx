@@ -23,6 +23,7 @@ const SupplimentAOneDepositsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { glPeriod } = useContext(GlPeriodContext);
   const [headers, setHeaders] = useState([]);
+  const reportType = searchParams.get("reportType") || "PR01";
 
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
@@ -39,6 +40,7 @@ const SupplimentAOneDepositsPage = () => {
   const fetchServices = () => {
     getScreensData(
       "/scr_supp_a1_deposits",
+      reportType,
       glPeriod,
       page + 1,
       rowsPerPage
@@ -53,13 +55,14 @@ const SupplimentAOneDepositsPage = () => {
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
+        reportType: reportType,
       });
     });
   };
 
   useEffect(() => {
     fetchServices();
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+  }, [page, rowsPerPage, glPeriod, reportType]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

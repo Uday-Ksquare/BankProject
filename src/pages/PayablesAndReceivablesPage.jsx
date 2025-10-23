@@ -30,7 +30,7 @@ const PayablesAndReceivablesPage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
-
+  const reportType = searchParams.get("reportType") || "PR01";
   useEffect(() => {
     getHeadersService("/scr_supp_j_payables_and_receivables").then((res) => {
       setHeaders(res || []);
@@ -39,6 +39,7 @@ const PayablesAndReceivablesPage = () => {
   const fetchServices = () => {
     getScreensData(
       "/scr_supp_j_payables_and_receivables",
+      reportType,
       glPeriod,
       page + 1,
       rowsPerPage
@@ -53,12 +54,15 @@ const PayablesAndReceivablesPage = () => {
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
+        reportType: reportType,
       });
     });
   };
+
   useEffect(() => {
     fetchServices();
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage, glPeriod, reportType]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -99,14 +103,56 @@ const PayablesAndReceivablesPage = () => {
                 style={{ width: "10%" }}
                 align="right"
               >
-                Current Period
+                EC DOLLAR Territory	
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                FOREIGN CURRENCY
+               Foreign Currency Territory	
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                EC DOLLAR Other ECCU	
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Foreign Currency Other ECCU	
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                EC DOLLAR Non-ECCU CARICOM	
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Foreign Currency Non-ECCU CARICOM	
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                EC DOLLAR Non-CARICOM	
+              </TableCell>
+              <TableCell
+                sx={headerCellStyles}
+                style={{ width: "10%" }}
+                align="right"
+              >
+                Foreign Currency Non-CARICOM	
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -123,6 +169,36 @@ const PayablesAndReceivablesPage = () => {
                 fetchServices={fetchServices}
                 width={"10%"}
                 emptyAllColumns={[
+                  {
+                    columnName: "ECCU Current Period",
+                    columnValue: 0.0,
+                    columnPosition: 1,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
+                  },
+                  {
+                    columnName: "ECCU Current Period",
+                    columnValue: 0.0,
+                    columnPosition: 1,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
+                  },
+                  {
+                    columnName: "ECCU Current Period",
+                    columnValue: 0.0,
+                    columnPosition: 1,
+                  },
+                  {
+                    columnName: "ECCU Foreign Currency",
+                    columnValue: 0.0,
+                    columnPosition: 2,
+                  },
                   {
                     columnName: "ECCU Current Period",
                     columnValue: 0.0,
