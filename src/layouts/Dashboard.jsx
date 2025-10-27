@@ -231,7 +231,7 @@ export default function Layout() {
             </SubMenu>
           </SubMenu>
 
-          <MenuItemPro> Upload </MenuItemPro>
+          <MenuItemPro component={<Link to={"/upload"} />}> Upload </MenuItemPro>
           {/* <MenuItem> Calendar </MenuItem> */}
         </Menu>
       </Sidebar>
