@@ -30,6 +30,7 @@ const SuppGLoansForeignCurrencyPage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
+    const reportType = searchParams.get("reportType") || "PR01";
 
   useEffect(() => {
     getHeadersService("/scr_supp_g_loans_foreign_currency").then((res) => {
@@ -39,6 +40,7 @@ const SuppGLoansForeignCurrencyPage = () => {
   const fetchServices = () => {
     getScreensData(
       "/scr_supp_g_loans_foreign_currency",
+      reportType,
       glPeriod,
       page + 1,
       rowsPerPage
@@ -47,6 +49,7 @@ const SuppGLoansForeignCurrencyPage = () => {
         screens: res.screens || [],
         totalItems: res.totalItems || 0,
         screenId: res.screenId || "",
+        reportType: reportType
       });
       // update URL query string whenever page/size changes
       setSearchParams({
@@ -58,7 +61,7 @@ const SuppGLoansForeignCurrencyPage = () => {
   };
   useEffect(() => {
     fetchServices();
-  }, [page, rowsPerPage, setSearchParams, glPeriod]);
+  }, [page, rowsPerPage, reportType, glPeriod]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
