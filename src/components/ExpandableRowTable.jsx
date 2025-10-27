@@ -61,6 +61,7 @@ const getExtraIndent = (desc) => {
 };
 
 const ExpandableRowTable = ({
+  editEnabled=true,
   fetchServices,
   descriptionWidth = "50%",
   row,
@@ -141,7 +142,7 @@ const ExpandableRowTable = ({
               setOpenEdit(true);
               setEditingRow(row);
             }}
-            disabled={row.allColumns.length === 0}
+            disabled={row.allColumns.length === 0 || !editEnabled}
             variant="contained"
           >
             Edit
@@ -241,7 +242,7 @@ const ExpandableRowTable = ({
                             setOpenEdit(true);
                             setEditingRow(child);
                           }}
-                          disabled={child.allColumns.length === 0}
+                          disabled={child.allColumns.length === 0 || !editEnabled}
                           variant="contained"
                         >
                           Edit

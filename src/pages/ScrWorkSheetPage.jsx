@@ -132,6 +132,7 @@ const ScrWorkSheetPage = () => {
           <TableBody>
             {(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
+                editEnabled={false}
                 fetchServices={fetchServices}
                 width={"10%"}
                 emptyAllColumns={[
