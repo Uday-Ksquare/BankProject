@@ -17,6 +17,7 @@ import { getScreensData } from "../services/getScreensData";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 import { getHeadersService } from "../services/getHeadersService";
 import TableHeadingCard from "../components/TableHeadingCard";
+import LinearProgressComponent from "../components/LinearProgressComponent";
 
 const PayablesAndReceivablesPage = () => {
   const [worksheet, setWorksheet] = useState({});
@@ -31,12 +32,14 @@ const PayablesAndReceivablesPage = () => {
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
   const reportType = searchParams.get("reportType") || "PR01";
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     getHeadersService("/scr_supp_j_payables_and_receivables").then((res) => {
       setHeaders(res || []);
     });
   }, []);
   const fetchServices = () => {
+    setLoading(true);
     getScreensData(
       "/scr_supp_j_payables_and_receivables",
       reportType,
@@ -49,6 +52,7 @@ const PayablesAndReceivablesPage = () => {
         totalItems: res.totalItems || 0,
         screenId: res.screenId || "",
       });
+      setLoading(false);
       // update URL query string whenever page/size changes
       setSearchParams({
         page: (page + 1).toString(),
@@ -103,56 +107,56 @@ const PayablesAndReceivablesPage = () => {
                 style={{ width: "10%" }}
                 align="right"
               >
-                EC DOLLAR Territory	
+                EC DOLLAR Territory
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-               Foreign Currency Territory	
+                Foreign Currency Territory
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                EC DOLLAR Other ECCU	
+                EC DOLLAR Other ECCU
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                Foreign Currency Other ECCU	
+                Foreign Currency Other ECCU
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                EC DOLLAR Non-ECCU CARICOM	
+                EC DOLLAR Non-ECCU CARICOM
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                Foreign Currency Non-ECCU CARICOM	
+                Foreign Currency Non-ECCU CARICOM
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                EC DOLLAR Non-CARICOM	
+                EC DOLLAR Non-CARICOM
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
                 style={{ width: "10%" }}
                 align="right"
               >
-                Foreign Currency Non-CARICOM	
+                Foreign Currency Non-CARICOM
               </TableCell>
               <TableCell
                 sx={headerCellStyles}
@@ -164,56 +168,60 @@ const PayablesAndReceivablesPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(worksheet?.screens || []).map((row) => (
-              <ExpandableRowTable
-                fetchServices={fetchServices}
-                width={"10%"}
-                emptyAllColumns={[
-                  {
-                    columnName: "ECCU Current Period",
-                    columnValue: 0.0,
-                    columnPosition: 1,
-                  },
-                  {
-                    columnName: "ECCU Foreign Currency",
-                    columnValue: 0.0,
-                    columnPosition: 2,
-                  },
-                  {
-                    columnName: "ECCU Current Period",
-                    columnValue: 0.0,
-                    columnPosition: 1,
-                  },
-                  {
-                    columnName: "ECCU Foreign Currency",
-                    columnValue: 0.0,
-                    columnPosition: 2,
-                  },
-                  {
-                    columnName: "ECCU Current Period",
-                    columnValue: 0.0,
-                    columnPosition: 1,
-                  },
-                  {
-                    columnName: "ECCU Foreign Currency",
-                    columnValue: 0.0,
-                    columnPosition: 2,
-                  },
-                  {
-                    columnName: "ECCU Current Period",
-                    columnValue: 0.0,
-                    columnPosition: 1,
-                  },
-                  {
-                    columnName: "ECCU Foreign Currency",
-                    columnValue: 0.0,
-                    columnPosition: 2,
-                  },
-                ]}
-                key={row.conceptId}
-                row={row}
-              />
-            ))}
+            {loading ? (
+              <LinearProgressComponent />
+            ) : (
+              (worksheet?.screens || []).map((row) => (
+                <ExpandableRowTable
+                  fetchServices={fetchServices}
+                  width={"10%"}
+                  emptyAllColumns={[
+                    {
+                      columnName: "ECCU Current Period",
+                      columnValue: 0.0,
+                      columnPosition: 1,
+                    },
+                    {
+                      columnName: "ECCU Foreign Currency",
+                      columnValue: 0.0,
+                      columnPosition: 2,
+                    },
+                    {
+                      columnName: "ECCU Current Period",
+                      columnValue: 0.0,
+                      columnPosition: 1,
+                    },
+                    {
+                      columnName: "ECCU Foreign Currency",
+                      columnValue: 0.0,
+                      columnPosition: 2,
+                    },
+                    {
+                      columnName: "ECCU Current Period",
+                      columnValue: 0.0,
+                      columnPosition: 1,
+                    },
+                    {
+                      columnName: "ECCU Foreign Currency",
+                      columnValue: 0.0,
+                      columnPosition: 2,
+                    },
+                    {
+                      columnName: "ECCU Current Period",
+                      columnValue: 0.0,
+                      columnPosition: 1,
+                    },
+                    {
+                      columnName: "ECCU Foreign Currency",
+                      columnValue: 0.0,
+                      columnPosition: 2,
+                    },
+                  ]}
+                  key={row.conceptId}
+                  row={row}
+                />
+              ))
+            )}
           </TableBody>
         </Table>
       </Paper>

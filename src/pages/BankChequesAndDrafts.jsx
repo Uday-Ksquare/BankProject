@@ -9,6 +9,7 @@ import {
   Paper,
   TablePagination,
   Typography,
+  LinearProgress,
 } from "@mui/material";
 import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
@@ -22,6 +23,7 @@ const BankChequesAndDrafts = () => {
   const [worksheet, setWorksheet] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const [headers, setHeaders] = useState([]);
+  const [loading, setLoading] = useState(false);
   // read from URL, fallback defaults
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10); // API expects 1-based
   const sizeFromUrl = parseInt(searchParams.get("pageSize") || "10", 10);
@@ -32,6 +34,7 @@ const BankChequesAndDrafts = () => {
   const reportType = searchParams.get("reportType") || "PR01";
 
   const fetchServices = () => {
+    setLoading(true);
     getScreensData(
       "/scr_supp_b_bank_cheques_and_drafts",
       reportType,
@@ -44,6 +47,7 @@ const BankChequesAndDrafts = () => {
         totalItems: res.totalItems || 0,
         screenId: res.screenId || "",
       });
+      setLoading(false);
       // update URL query string whenever page/size changes
       setSearchParams({
         page: (page + 1).toString(),
@@ -122,25 +126,33 @@ const BankChequesAndDrafts = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(worksheet?.screens || []).map((row) => (
-              <ExpandableRowTable
-                fetchServices={fetchServices}
-                emptyAllColumns={[
-                  {
-                    columnName: "ECCU Current Period",
-                    columnValue: 0.0,
-                    columnPosition: 1,
-                  },
-                  {
-                    columnName: "ECCU Foreign Currency",
-                    columnValue: 0.0,
-                    columnPosition: 2,
-                  },
-                ]}
-                key={row.conceptId}
-                row={row}
-              />
-            ))}
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={200} sx={{ padding: 0 }}>
+                  <LinearProgress sx={{ width: "100%", margin: "10px 0" }} />
+                </TableCell>
+              </TableRow>
+            ) : (
+              (worksheet?.screens || []).map((row) => (
+                <ExpandableRowTable
+                  fetchServices={fetchServices}
+                  emptyAllColumns={[
+                    {
+                      columnName: "ECCU Current Period",
+                      columnValue: 0.0,
+                      columnPosition: 1,
+                    },
+                    {
+                      columnName: "ECCU Foreign Currency",
+                      columnValue: 0.0,
+                      columnPosition: 2,
+                    },
+                  ]}
+                  key={row.conceptId}
+                  row={row}
+                />
+              ))
+            )}
           </TableBody>
         </Table>
       </Paper>

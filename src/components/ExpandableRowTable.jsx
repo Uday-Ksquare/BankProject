@@ -19,14 +19,14 @@ import toast from "react-hot-toast";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 import { useSearchParams } from "react-router-dom";
 
-const updatedData = (data, editingRow, row, glPeriod,reportType) =>
+const updatedData = (data, editingRow, row, glPeriod, reportType) =>
   data.map((item) => ({
     ...item,
     detailId: editingRow.detailId,
     glPeriod: glPeriod,
     conceptId: row.conceptId,
     columnValue: parseFloat(item.columnValue),
-    reptypeId:reportType
+    reptypeId: reportType,
   }));
 
 const cellStyles = {
@@ -61,7 +61,7 @@ const getExtraIndent = (desc) => {
 };
 
 const ExpandableRowTable = ({
-  editEnabled=true,
+  editEnabled = true,
   fetchServices,
   descriptionWidth = "50%",
   row,
@@ -112,7 +112,7 @@ const ExpandableRowTable = ({
   return (
     <>
       {/* Parent Row */}
-      <TableRow>
+      <TableRow >
         <TableCell
           sx={{
             ...(level === 0 ? groupHeaderStyles : cellStyles),
@@ -161,7 +161,9 @@ const ExpandableRowTable = ({
         cancelText="Cancel"
         setOpenEdit={setOpenEdit}
         onSubmit={() => {
-          PatchDetails(updatedData(editFields, editingRow, row, glPeriod,reportType))
+          PatchDetails(
+            updatedData(editFields, editingRow, row, glPeriod, reportType)
+          )
             .then(() => {
               setOpenEdit(false);
               toast.success("Updated successfully", { duration: 4000 });
@@ -185,7 +187,11 @@ const ExpandableRowTable = ({
             />
           ))}
           <pre>
-            {JSON.stringify(updatedData(editFields, editingRow, row,glPeriod,reportType), null, 2)}
+            {JSON.stringify(
+              updatedData(editFields, editingRow, row, glPeriod, reportType),
+              null,
+              2
+            )}
           </pre>
         </Box>
       </EditDrawerComponent>
@@ -242,7 +248,9 @@ const ExpandableRowTable = ({
                             setOpenEdit(true);
                             setEditingRow(child);
                           }}
-                          disabled={child.allColumns.length === 0 || !editEnabled}
+                          disabled={
+                            child.allColumns.length === 0 || !editEnabled
+                          }
                           variant="contained"
                         >
                           Edit

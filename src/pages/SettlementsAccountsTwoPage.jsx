@@ -17,6 +17,7 @@ import { getScreensData } from "../services/getScreensData";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 import { getHeadersService } from "../services/getHeadersService";
 import TableHeadingCard from "../components/TableHeadingCard";
+import LinearProgressComponent from "../components/LinearProgressComponent";
 
 const SettlementsAccountsTwoPage = () => {
   const [worksheet, setWorksheet] = useState({});
@@ -29,6 +30,7 @@ const SettlementsAccountsTwoPage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getHeadersService("/scr_supp_i2_settlement_accounts%20").then((res) => {
@@ -36,6 +38,7 @@ const SettlementsAccountsTwoPage = () => {
     });
   }, []);
   const fetchServices = () => {
+    setLoading(true);
     getScreensData(
       "/scr_supp_i2_settlement_accounts",
       reportType,
@@ -48,12 +51,13 @@ const SettlementsAccountsTwoPage = () => {
         totalItems: res.totalItems || 0,
         screenId: res.screenId || "",
       });
+      setLoading(false);
       // update URL query string whenever page/size changes
       setSearchParams({
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
-        reportType:reportType
+        reportType: reportType,
       });
     });
   };
@@ -120,26 +124,30 @@ const SettlementsAccountsTwoPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(worksheet?.screens || []).map((row) => (
-              <ExpandableRowTable
-                fetchServices={fetchServices}
-                width={"10%"}
-                emptyAllColumns={[
-                  {
-                    columnName: "ECCU Current Period",
-                    columnValue: 0.0,
-                    columnPosition: 1,
-                  },
-                  {
-                    columnName: "ECCU Foreign Currency",
-                    columnValue: 0.0,
-                    columnPosition: 2,
-                  },
-                ]}
-                key={row.conceptId}
-                row={row}
-              />
-            ))}
+            {loading ? (
+              <LinearProgressComponent />
+            ) : (
+              (worksheet?.screens || []).map((row) => (
+                <ExpandableRowTable
+                  fetchServices={fetchServices}
+                  width={"10%"}
+                  emptyAllColumns={[
+                    {
+                      columnName: "ECCU Current Period",
+                      columnValue: 0.0,
+                      columnPosition: 1,
+                    },
+                    {
+                      columnName: "ECCU Foreign Currency",
+                      columnValue: 0.0,
+                      columnPosition: 2,
+                    },
+                  ]}
+                  key={row.conceptId}
+                  row={row}
+                />
+              ))
+            )}
           </TableBody>
         </Table>
       </Paper>

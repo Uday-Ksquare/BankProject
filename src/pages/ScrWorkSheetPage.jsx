@@ -17,6 +17,7 @@ import { getScreensData } from "../services/getScreensData";
 import { getHeadersService } from "../services/getHeadersService";
 import TableHeadingCard from "../components/TableHeadingCard";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
+import LinearProgressComponent from "../components/LinearProgressComponent";
 
 const ScrWorkSheetPage = () => {
   const [worksheet, setWorksheet] = useState({});
@@ -30,8 +31,10 @@ const ScrWorkSheetPage = () => {
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
   const reportType = searchParams.get("reportType") || "PR01";
+  const [loading, setLoading] = useState(false);
 
   const fetchServices = () => {
+    setLoading(true);
     getScreensData(
       "/scr_worksheet",
       reportType,
@@ -44,6 +47,7 @@ const ScrWorkSheetPage = () => {
         totalItems: res.totalItems || 0,
         screenId: res.screenId || "",
       });
+      setLoading(false);
       // update URL query string whenever page/size changes
       setSearchParams({
         page: (page + 1).toString(),
@@ -130,7 +134,9 @@ const ScrWorkSheetPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(worksheet?.screens || []).map((row) => (
+            {loading ? (
+              <LinearProgressComponent/>
+            ):(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
                 editEnabled={false}
                 fetchServices={fetchServices}

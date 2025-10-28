@@ -17,6 +17,7 @@ import { getScreensData } from "../services/getScreensData";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 import TableHeadingCard from "../components/TableHeadingCard";
 import { getHeadersService } from "../services/getHeadersService";
+import LinearProgressComponent from "../components/LinearProgressComponent";
 
 const SuppGLoansForeignCurrencyPage = () => {
   const [worksheet, setWorksheet] = useState({});
@@ -30,7 +31,8 @@ const SuppGLoansForeignCurrencyPage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
-    const reportType = searchParams.get("reportType") || "PR01";
+  const reportType = searchParams.get("reportType") || "PR01";
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getHeadersService("/scr_supp_g_loans_foreign_currency").then((res) => {
@@ -38,6 +40,7 @@ const SuppGLoansForeignCurrencyPage = () => {
     });
   }, []);
   const fetchServices = () => {
+    setLoading(true);
     getScreensData(
       "/scr_supp_g_loans_foreign_currency",
       reportType,
@@ -49,8 +52,9 @@ const SuppGLoansForeignCurrencyPage = () => {
         screens: res.screens || [],
         totalItems: res.totalItems || 0,
         screenId: res.screenId || "",
-        reportType: reportType
+        reportType: reportType,
       });
+      setLoading(false);
       // update URL query string whenever page/size changes
       setSearchParams({
         page: (page + 1).toString(),
@@ -135,36 +139,40 @@ const SuppGLoansForeignCurrencyPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(worksheet?.screens || []).map((row) => (
-              <ExpandableRowTable
-                fetchServices={fetchServices}
-                width={"10%"}
-                emptyAllColumns={[
-                  {
-                    columnName: "ECCU Current Period",
-                    columnValue: 0.0,
-                    columnPosition: 1,
-                  },
-                  {
-                    columnName: "ECCU Foreign Currency",
-                    columnValue: 0.0,
-                    columnPosition: 2,
-                  },
-                  {
-                    columnName: "ECCU Foreign Currency",
-                    columnValue: 0.0,
-                    columnPosition: 2,
-                  },
-                  {
-                    columnName: "ECCU Foreign Currency",
-                    columnValue: 0.0,
-                    columnPosition: 2,
-                  },
-                ]}
-                key={row.conceptId}
-                row={row}
-              />
-            ))}
+            {loading ? (
+              <LinearProgressComponent />
+            ) : (
+              (worksheet?.screens || []).map((row) => (
+                <ExpandableRowTable
+                  fetchServices={fetchServices}
+                  width={"10%"}
+                  emptyAllColumns={[
+                    {
+                      columnName: "ECCU Current Period",
+                      columnValue: 0.0,
+                      columnPosition: 1,
+                    },
+                    {
+                      columnName: "ECCU Foreign Currency",
+                      columnValue: 0.0,
+                      columnPosition: 2,
+                    },
+                    {
+                      columnName: "ECCU Foreign Currency",
+                      columnValue: 0.0,
+                      columnPosition: 2,
+                    },
+                    {
+                      columnName: "ECCU Foreign Currency",
+                      columnValue: 0.0,
+                      columnPosition: 2,
+                    },
+                  ]}
+                  key={row.conceptId}
+                  row={row}
+                />
+              ))
+            )}
           </TableBody>
         </Table>
       </Paper>

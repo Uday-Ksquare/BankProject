@@ -17,6 +17,7 @@ import { getScreensData } from "../services/getScreensData";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 import TableHeadingCard from "../components/TableHeadingCard";
 import { getHeadersService } from "../services/getHeadersService";
+import LinearProgressComponent from "../components/LinearProgressComponent";
 
 const SuppDBorrowings = () => {
   const [worksheet, setWorksheet] = useState({});
@@ -30,7 +31,8 @@ const SuppDBorrowings = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
-    const reportType = searchParams.get("reportType") || "PR01";
+  const reportType = searchParams.get("reportType") || "PR01";
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getHeadersService("/scr_supp_d_borrowings").then((res) => {
@@ -38,6 +40,7 @@ const SuppDBorrowings = () => {
     });
   }, []);
   const fetchServices = () => {
+    setLoading(true);
     getScreensData(
       "/scr_supp_d_borrowings",
       reportType,
@@ -50,12 +53,13 @@ const SuppDBorrowings = () => {
         totalItems: res.totalItems || 0,
         screenId: res.screenId || "",
       });
+      setLoading(false);
       // update URL query string whenever page/size changes
       setSearchParams({
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
-        reportType:reportType
+        reportType: reportType,
       });
     });
   };
@@ -136,9 +140,11 @@ const SuppDBorrowings = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(worksheet?.screens || []).map((row) => (
+            {loading ? (
+              <LinearProgressComponent/>
+            ):(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
-              fetchServices={fetchServices}
+                fetchServices={fetchServices}
                 emptyAllColumns={[
                   {
                     columnName: "ECCU Current Period",

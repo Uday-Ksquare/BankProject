@@ -17,6 +17,7 @@ import { getScreensData } from "../services/getScreensData";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 import { getHeadersService } from "../services/getHeadersService";
 import TableHeadingCard from "../components/TableHeadingCard";
+import LinearProgressComponent from "../components/LinearProgressComponent";
 
 const DueToDueFormOtherNonEccuPage = () => {
   const [worksheet, setWorksheet] = useState({});
@@ -30,7 +31,8 @@ const DueToDueFormOtherNonEccuPage = () => {
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
-    const reportType = searchParams.get("reportType") || "PR01";
+  const reportType = searchParams.get("reportType") || "PR01";
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getHeadersService("/scr_supp_c_due_to_and_due_from_other_non_eccu").then(
@@ -40,6 +42,7 @@ const DueToDueFormOtherNonEccuPage = () => {
     );
   }, []);
   const fetchServices = () => {
+    setLoading(true);
     getScreensData(
       "/scr_supp_c_due_to_and_due_from_other_non_eccu",
       reportType,
@@ -52,16 +55,17 @@ const DueToDueFormOtherNonEccuPage = () => {
         totalItems: res.totalItems || 0,
         screenId: res.screenId || "",
       });
+      setLoading(false);
       // update URL query string whenever page/size changes
       setSearchParams({
         page: (page + 1).toString(),
         pageSize: rowsPerPage.toString(),
         period: glPeriod,
-        reportType:reportType
+        reportType: reportType,
       });
     });
   };
-  
+
   useEffect(() => {
     fetchServices();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,7 +129,9 @@ const DueToDueFormOtherNonEccuPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(worksheet?.screens || []).map((row) => (
+            {loading ? (
+              <LinearProgressComponent/>
+            ):(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
                 fetchServices={fetchServices}
                 emptyAllColumns={[

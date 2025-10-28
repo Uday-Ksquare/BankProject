@@ -10,6 +10,7 @@ import {
   TablePagination,
   Typography,
   Skeleton,
+  LinearProgress,
 } from "@mui/material";
 import { headerCellStyles } from "../utils/consonants";
 import { useSearchParams } from "react-router-dom";
@@ -87,24 +88,15 @@ const AccruedPage = () => {
         gap: "10px",
       }}
     >
-      {loading ? (
-        Array.from({ length: 3 }, (_, index) => (
-          <Skeleton key={index} variant="rectangular" height={50} />
-        ))
-      ) : (
-        <>
-          <Typography
-            sx={{ color: "#0F2C6D", fontWeight: "bold" }}
-            variant="h6"
-          >
-            {worksheet?.screenId}
-          </Typography>
-          <TableHeadingCard
-            headingOne={headers[0]?.header_text}
-            SubHeading={headers[1]?.header_text}
-          />
-        </>
-      )}
+      <>
+        <Typography sx={{ color: "#0F2C6D", fontWeight: "bold" }} variant="h6">
+          {worksheet?.screenId}
+        </Typography>
+        <TableHeadingCard
+          headingOne={headers[0]?.header_text}
+          SubHeading={headers[1]?.header_text}
+        />
+      </>
       <Paper sx={{ overflowX: "auto" }}>
         <Table>
           <TableHead>
@@ -135,9 +127,9 @@ const AccruedPage = () => {
               </TableCell>
             </TableRow>
           </TableHead>
-          {!loading ? (
-            <TableBody>
-              {(worksheet?.screens || []).map((row) => (
+          <TableBody>
+            {!loading ? (
+              (worksheet?.screens || []).map((row) => (
                 <ExpandableRowTable
                   fetchServices={fetchServices}
                   width={"10%"}
@@ -156,11 +148,15 @@ const AccruedPage = () => {
                   key={row.conceptId}
                   row={row}
                 />
-              ))}
-            </TableBody>
-          ) : (
-            <p>No Data to display</p>
-          )}
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={200} sx={{ padding: 0 }}>
+                  <LinearProgress sx={{ width: "100%", margin: "10px 0" }} />
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
         </Table>
       </Paper>
       {/* Pagination Control */}

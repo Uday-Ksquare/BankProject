@@ -17,6 +17,7 @@ import { getScreensData } from "../services/getScreensData";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
 import { getHeadersService } from "../services/getHeadersService";
 import TableHeadingCard from "../components/TableHeadingCard";
+import LinearProgressComponent from "../components/LinearProgressComponent";
 
 const InvestmentAndDebenture = () => {
   const [worksheet, setWorksheet] = useState({});
@@ -31,6 +32,7 @@ const InvestmentAndDebenture = () => {
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const { glPeriod } = useContext(GlPeriodContext);
   const reportType = searchParams.get("reportType") || "PR01";
+  const [loading,setLoading] = useState(false);
 
   useEffect(() => {
     getHeadersService("/scr_supp_h_investment_and_debenture").then((res) => {
@@ -38,6 +40,7 @@ const InvestmentAndDebenture = () => {
     });
   }, []);
   const fetchServices = () => {
+    setLoading(true);
     getScreensData(
       "/scr_supp_h_investment_and_debenture",
       reportType,
@@ -50,6 +53,7 @@ const InvestmentAndDebenture = () => {
         totalItems: res.totalItems || 0,
         screenId: res.screenId || "",
       });
+      setLoading(false);
       // update URL query string whenever page/size changes
       setSearchParams({
         page: (page + 1).toString(),
@@ -123,7 +127,9 @@ const InvestmentAndDebenture = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(worksheet?.screens || []).map((row) => (
+            {loading ? (
+              <LinearProgressComponent/>
+            ):(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
                 fetchServices={fetchServices}
                 width={"10%"}

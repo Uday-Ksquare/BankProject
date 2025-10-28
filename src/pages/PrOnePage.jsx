@@ -16,6 +16,7 @@ import { getScreensData } from "../services/getScreensData";
 import { getHeadersService } from "../services/getHeadersService";
 import TableHeadingCard from "../components/TableHeadingCard";
 import { GlPeriodContext } from "../Contexts/GlPeriodContext";
+import LinearProgressComponent from "../components/LinearProgressComponent";
 
 const PrOnePage = () => {
   const [worksheet, setWorksheet] = useState({});
@@ -30,6 +31,7 @@ const PrOnePage = () => {
 
   const [page, setPage] = useState(pageFromUrl - 1); // MUI is 0-based
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
+  const [loading,setLoading] = useState(false);
 
   useEffect(() => {
     getHeadersService("/scr_pr01").then((res) => {
@@ -37,11 +39,13 @@ const PrOnePage = () => {
     });
   }, []);
   useEffect(() => {
+    setLoading(true);
     getScreensData("/scr_pr01",reportType, glPeriod, page + 1, rowsPerPage).then((res) => {
       setWorksheet({
         screens: res.screens || [],
         totalItems: res.totalItems || 0,
       });
+      setLoading(false);
       // update URL query string whenever page/size changes
       setSearchParams({
         page: (page + 1).toString(),
@@ -107,7 +111,9 @@ const PrOnePage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(worksheet?.screens || []).map((row) => (
+            {loading ? (
+              <LinearProgressComponent/>
+            ):(worksheet?.screens || []).map((row) => (
               <ExpandableRowTable
                 width={"10%"}
                 emptyAllColumns={[
