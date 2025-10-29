@@ -13,10 +13,11 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import GlAccessDropDown from "../components/GlAccessDropDown";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import axios from "axios";
+import { getTablesToImport } from "../services/getTablesToImport";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -49,15 +50,15 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-const tabledata = [
-  { id: 1, excelFileName: "SAVLST" },
-  { id: 2, excelFileName: "INVLST" },
-  { id: 3, excelFileName: "GLDAYS" },
-  { id: 4, excelFileName: "CDSLST" },
-  { id: 5, excelFileName: "FINDEP" },
-  { id: 6, excelFileName: "FINLNS" },
-  { id: 7, excelFileName: "DDALST" },
-];
+// const tabledata = [
+//   { id: 1, excelFileName: "SAVLST" },
+//   { id: 2, excelFileName: "INVLST" },
+//   { id: 3, excelFileName: "GLDAYS" },
+//   { id: 4, excelFileName: "CDSLST" },
+//   { id: 5, excelFileName: "FINDEP" },
+//   { id: 6, excelFileName: "FINLNS" },
+//   { id: 7, excelFileName: "DDALST" },
+// ];
 
 const FileUploader = ({ setFiles, files, isEnabled }) => {
   const handleFileChange = (event) => {
@@ -95,6 +96,10 @@ const DocumentUploaderContainer = () => {
   const [period, setPeriod] = useState("");
   const [files, setFiles] = useState({});
   const [enabledRows, setEnabledRows] = useState({});
+  const [tablesToImport, setTablesToImport] = useState([]);
+  useEffect(() => {
+    getTablesToImport().then((res) => setTablesToImport(res));
+  }, []);
 
   // Toggle a single row
   const toggleRow = (id) => {
@@ -104,7 +109,7 @@ const DocumentUploaderContainer = () => {
   // Select/Deselect all
   const toggleAll = (checked) => {
     const newState = {};
-    tabledata.forEach((row) => {
+    tablesToImport.forEach((row) => {
       newState[row.id] = checked;
     });
     setEnabledRows(newState);
@@ -164,7 +169,7 @@ const DocumentUploaderContainer = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tabledata.map((row) => (
+            {tablesToImport.map((row) => (
               <StyledTableRow key={row.id}>
                 <StyledTableCell>
                   <Checkbox
@@ -172,7 +177,7 @@ const DocumentUploaderContainer = () => {
                     onChange={() => toggleRow(row.id)}
                   />
                 </StyledTableCell>
-                <StyledTableCell>{row.excelFileName}</StyledTableCell>
+                <StyledTableCell>{row.table_alias}</StyledTableCell>
                 <StyledTableCell>
                   <FileUploader
                     isEnabled={!!enabledRows[row.id]}
